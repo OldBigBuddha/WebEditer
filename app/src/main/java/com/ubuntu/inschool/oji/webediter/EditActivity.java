@@ -1,16 +1,41 @@
 package com.ubuntu.inschool.oji.webediter;
 
+import android.content.DialogInterface;
+import android.preference.DialogPreference;
 import android.support.design.widget.TabLayout;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.view.ViewPager;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.EditText;
 
-public class EditActivity extends AppCompatActivity {
+import com.ubuntu.inschool.oji.webediter.layout.BlankFragment;
+
+import java.io.File;
+import java.io.IOException;
+
+public class EditActivity extends AppCompatActivity implements ViewPager.OnPageChangeListener{
+
+
+    AlertDialog alertDialog;
+    AlertDialog.Builder ADBuilder;
+
+    String projectName;
 
     TabLayout tabLayout;
+    ViewPager viewPager;
+    final String[] PAGE_TITLE = {"index.html", "style.css", "index.js"};
     Toolbar toolbar;
+
+    public EditActivity() {
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -18,15 +43,89 @@ public class EditActivity extends AppCompatActivity {
         setContentView(R.layout.activity_edit);
 
         toolbar = (Toolbar)findViewById(R.id.tool_bar);
+        tabLayout = (TabLayout)findViewById(R.id.tabs);
+        viewPager = (ViewPager)findViewById(R.id.pager);
+
+        FragmentPagerAdapter adapter = new FragmentPagerAdapter(getSupportFragmentManager()) {
+            @Override
+            public Fragment getItem(int position) {
+                return BlankFragment.newInstance(position + 1);
+            }
+
+            @Override
+            public CharSequence getPageTitle(int position) {
+                return PAGE_TITLE[position];
+            }
+
+
+
+            @Override
+            public int getCount() {
+                return PAGE_TITLE.length;
+            }
+        };
+
         setSupportActionBar(toolbar);
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-//        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        tabLayout = (TabLayout)findViewById(R.id.tabs);
+        final View VIEW = EditActivity.this.getLayoutInflater().inflate(R.layout.context_main, null);
+
+
+        ADBuilder = new AlertDialog.Builder(EditActivity.this);
+
+        ADBuilder.setTitle("Project's Name")
+                .setView(VIEW)
+                .setPositiveButton("GO!!", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        EditText editText_ProjectName = (EditText)VIEW.findViewById(R.id.editText_ProjectName);
+                        EditActivity.this.projectName = editText_ProjectName.getText().toString();
+//                        super.onClick();
+                    }
+                });
+
+        alertDialog = ADBuilder.create();
+        alertDialog.show();
+
         tabLayout.addTab(tabLayout.newTab().setText("Tab 1"));
         tabLayout.addTab(tabLayout.newTab().setText("Tab 2"));
         tabLayout.addTab(tabLayout.newTab().setText("Tab 3"));
+
+        viewPager.setAdapter(adapter);
+        viewPager.addOnPageChangeListener(this);
+
+        tabLayout.setupWithViewPager(viewPager);
+
+        final String DPATH = "/storage/sdcard1/com.ubuntu.inschool.oji.webedite/";
+        final String FPATH = DPATH + projectName;
+        File newDir = new File(FPATH);
+
+        File htmlFile = new File(FPATH + "/index.html");
+        try {
+            if (htmlFile.createNewFile()) {
+                Log.d("NewFileLog", "OK");
+            } else {
+                Log.d("NewFileLog", "NOT");
+            }
+
+        }catch (IOException e) {
+            Log.d("IOException", e + "");
+        }
+
+        File cssFile = new File(FPATH + "/style.css");
+        try {
+            if (cssFile.createNewFile()) {
+                Log.d("NewFileLog", "OK");
+            } else {
+                Log.d("NewFileLog", "NOT");
+
+            }
+        }catch (IOException e) {
+            Log.d("IOException", e + "");
+        }
+
+
     }
 
     @Override
@@ -47,5 +146,21 @@ public class EditActivity extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+
+    @Override
+    public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+    }
+
+    @Override
+    public void onPageSelected(int position) {
+
+    }
+
+    @Override
+    public void onPageScrollStateChanged(int state) {
+
     }
 }
