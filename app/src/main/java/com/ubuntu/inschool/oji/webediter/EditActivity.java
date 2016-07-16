@@ -97,33 +97,33 @@ public class EditActivity extends AppCompatActivity implements ViewPager.OnPageC
 
         tabLayout.setupWithViewPager(viewPager);
 
-        final String DPATH = "/storage/sdcard1/com.ubuntu.inschool.oji.webedite/";
-        final String FPATH = DPATH + projectName;
-        File newDir = new File(FPATH);
-
-        File htmlFile = new File(FPATH + "/index.html");
-        try {
-            if (htmlFile.createNewFile()) {
-                Log.d("NewFileLog", "OK");
-            } else {
-                Log.d("NewFileLog", "NOT");
-            }
-
-        }catch (IOException e) {
-            Log.d("IOException", e + "");
-        }
-
-        File cssFile = new File(FPATH + "/style.css");
-        try {
-            if (cssFile.createNewFile()) {
-                Log.d("NewFileLog", "OK");
-            } else {
-                Log.d("NewFileLog", "NOT");
-
-            }
-        }catch (IOException e) {
-            Log.d("IOException", e + "");
-        }
+//        final String DPATH = "/storage/sdcard1/com.ubuntu.inschool.oji.webedite/";
+//        final String FPATH = DPATH + projectName;
+//        File newDir = new File(FPATH);
+//
+//        File htmlFile = new File(FPATH + "/index.html");
+//        try {
+//            if (htmlFile.createNewFile()) {
+//                Log.d("NewFileLog", "OK");
+//            } else {
+//                Log.d("NewFileLog", "NOT");
+//            }
+//
+//        }catch (IOException e) {
+//            Log.d("IOException", e + "");
+//        }
+//
+//        File cssFile = new File(FPATH + "/style.css");
+//        try {
+//            if (cssFile.createNewFile()) {
+//                Log.d("NewFileLog", "OK");
+//            } else {
+//                Log.d("NewFileLog", "NOT");
+//
+//            }
+//        }catch (IOException e) {
+//            Log.d("IOException", e + "");
+//        }
 
 
     }
@@ -140,12 +140,20 @@ public class EditActivity extends AppCompatActivity implements ViewPager.OnPageC
 
         final int ID = item.getItemId();
 
-        switch (ID) {
-            case R.id.new_tab:
+        final CharSequence[] ITEMS = {"HTML","CSS","JavaScript"};
+        AlertDialog.Builder addDig = new AlertDialog.Builder(EditActivity.this);
+        addDig.setTitle("ファイル形式を選択してください");
+        addDig.setItems(ITEMS, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
                 tabLayout.addTab(tabLayout.newTab().setText("TAB_NEW"));
+
+            }
         }
 
-        return super.onOptionsItemSelected(item);
+        if (super.onOptionsItemSelected(item)) return true;
+        else return false;
     }
 
 
