@@ -1,7 +1,6 @@
 package com.ubuntu.inschool.oji.webediter;
 
 import android.content.DialogInterface;
-import android.preference.DialogPreference;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentPagerAdapter;
@@ -10,16 +9,12 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 
-import com.ubuntu.inschool.oji.webediter.layout.BlankFragment;
-
-import java.io.File;
-import java.io.IOException;
+import com.ubuntu.inschool.oji.webediter.Fragments.BlankFragment;
 
 public class EditActivity extends AppCompatActivity implements ViewPager.OnPageChangeListener{
 
@@ -140,6 +135,18 @@ public class EditActivity extends AppCompatActivity implements ViewPager.OnPageC
 
         final int ID = item.getItemId();
 
+        final FragmentPagerAdapter adapter_addTab = new FragmentPagerAdapter(getSupportFragmentManager()) {
+            @Override
+            public Fragment getItem(int position) {
+                return BlankFragment.newInstance(position);
+            }
+
+            @Override
+            public int getCount() {
+                return 0;
+            }
+        };
+
         final CharSequence[] ITEMS = {"HTML","CSS","JavaScript"};
         AlertDialog.Builder addDig = new AlertDialog.Builder(EditActivity.this);
         addDig.setTitle("ファイル形式を選択してください");
@@ -147,13 +154,29 @@ public class EditActivity extends AppCompatActivity implements ViewPager.OnPageC
             @Override
             public void onClick(DialogInterface dialog, int which) {
 
-                tabLayout.addTab(tabLayout.newTab().setText("TAB_NEW"));
+                switch (which) {
+                    case 0:
+                        tabLayout.addTab(tabLayout.newTab().setText("HTMLFile") );
+                        viewPager.setAdapter(adapter_addTab);
+                        viewPager.addOnPageChangeListener(this);
+                        break;
+                    case 1:
+                        tabLayout.addTab(tabLayout.newTab().setText("CSSFile"));
+                        break;
+                    case 2:
+                        tabLayout.addTab(tabLayout.newTab().setText("JavaScriptFile"));
+                        break;
+
+                }
+//
+//                tabLayout.addTab(tabLayout.newTab().setText("TAB_NEW"));
 
             }
-        }
+        });
+        addDig.create().show();
 
-        if (super.onOptionsItemSelected(item)) return true;
-        else return false;
+        return super.onOptionsItemSelected(item);
+
     }
 
 

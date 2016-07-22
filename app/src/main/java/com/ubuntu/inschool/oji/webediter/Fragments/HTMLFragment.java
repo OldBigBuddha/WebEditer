@@ -1,4 +1,4 @@
-package com.ubuntu.inschool.oji.webediter.layout;
+package com.ubuntu.inschool.oji.webediter.Fragments;
 
 
 import android.os.Bundle;

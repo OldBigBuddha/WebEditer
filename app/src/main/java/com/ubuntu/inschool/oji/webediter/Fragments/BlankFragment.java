@@ -1,4 +1,4 @@
-package com.ubuntu.inschool.oji.webediter.layout;
+package com.ubuntu.inschool.oji.webediter.Fragments;
 
 import android.content.Context;
 import android.net.Uri;
@@ -7,7 +7,7 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
+import android.widget.EditText;
 
 import com.ubuntu.inschool.oji.webediter.R;
 
@@ -61,8 +61,10 @@ public class BlankFragment extends Fragment {
         // Inflate the layout for this fragment
         int page = getArguments().getInt(ARG_PARAM, 0);
         View view = inflater.inflate(R.layout.fragment_blank, container, false);
+        EditText editText = (EditText)view.findViewById(R.id.editText);
 //        TextView textView = (TextView)view.findViewById(R.id.editText);
 //        textView.setText("Page" + page);
+        editText.setText("Page" + page);
 
         return view;
     }
