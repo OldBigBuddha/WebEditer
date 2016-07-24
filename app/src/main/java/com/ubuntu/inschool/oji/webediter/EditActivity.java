@@ -18,6 +18,8 @@ import android.widget.EditText;
 
 import com.ubuntu.inschool.oji.webediter.Fragments.BlankFragment;
 
+import java.util.ArrayList;
+
 public class EditActivity extends AppCompatActivity implements ViewPager.OnPageChangeListener{
 
 
@@ -29,6 +31,7 @@ public class EditActivity extends AppCompatActivity implements ViewPager.OnPageC
     TabLayout tabLayout;
     ViewPager viewPager;
     final String[] PAGE_TITLE = {"index.html", "style.css", "index.js"};
+    ArrayList<String> page_title = new ArrayList<String>();
     Toolbar toolbar;
 
     FragmentPagerAdapter adapter = new FragmentPagerAdapter(getSupportFragmentManager()) {
@@ -40,8 +43,8 @@ public class EditActivity extends AppCompatActivity implements ViewPager.OnPageC
         @Override
         public CharSequence getPageTitle(int position) {
             CharSequence page_char = "Page" + position;
-                return PAGE_TITLE[position];
-//            return page_char;
+//                return PAGE_TITLE[position];
+            return page_char;
         }
 
         @Override
@@ -90,6 +93,10 @@ public class EditActivity extends AppCompatActivity implements ViewPager.OnPageC
         tabLayout.addTab(tabLayout.newTab().setText("Tab 1"));
         tabLayout.addTab(tabLayout.newTab().setText("Tab 2"));
         tabLayout.addTab(tabLayout.newTab().setText("Tab 3"));
+
+        page_title.add("index.html");
+        page_title.add("style.css");
+        page_title.add("index.js");
 
         viewPager.setAdapter(adapter);
         viewPager.addOnPageChangeListener(this);
@@ -160,11 +167,13 @@ public class EditActivity extends AppCompatActivity implements ViewPager.OnPageC
 
                 switch (which) {
                     case 0:
+                        EditActivity.this.makeDialog();
+
                         tabLayout.addTab(tabLayout.newTab().setText("HTMLFile") );
 
-//                        viewPager.setAdapter(adapter);
-//                        viewPager.addOnPageChangeListener(EditActivity.this);
-//                        tabLayout.setupWithViewPager(viewPager);
+                        viewPager.setAdapter(adapter);
+                        viewPager.addOnPageChangeListener(EditActivity.this);
+                        tabLayout.setupWithViewPager(viewPager);
                         break;
                     case 1:
                         tabLayout.addTab(tabLayout.newTab().setText("CSSFile"));
@@ -181,6 +190,8 @@ public class EditActivity extends AppCompatActivity implements ViewPager.OnPageC
 
             }
         });
+
+
         addDig.create().show();
 
         return super.onOptionsItemSelected(item);
@@ -200,6 +211,30 @@ public class EditActivity extends AppCompatActivity implements ViewPager.OnPageC
 
     @Override
     public void onPageScrollStateChanged(int state) {
+
+    }
+
+    public void makeDialog() {
+        AlertDialog.Builder nameDig = new AlertDialog.Builder(EditActivity.this);
+        final EditText editText_FileName = new EditText(EditActivity.this);
+        nameDig.setTitle("ファイル名を入力してください（拡張子必須）");
+        nameDig.setView(editText_FileName);
+        nameDig.setPositiveButton("MakeFile", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                String fileName;
+                fileName = editText_FileName.getText().toString();
+                page_title.add(fileName);
+            }
+        });
+        nameDig.setNegativeButton("キャンセル", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+            }
+        });
+
+        nameDig.create().show();
 
     }
 }
