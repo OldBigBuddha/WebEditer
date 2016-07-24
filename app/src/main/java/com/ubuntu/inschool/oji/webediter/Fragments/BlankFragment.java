@@ -64,7 +64,7 @@ public class BlankFragment extends Fragment {
         EditText editText = (EditText)view.findViewById(R.id.editText);
 //        TextView textView = (TextView)view.findViewById(R.id.editText);
 //        textView.setText("Page" + page);
-        editText.setText("Page" + page);
+        editText.setText("Page" + (page + 1));
 
         return view;
     }

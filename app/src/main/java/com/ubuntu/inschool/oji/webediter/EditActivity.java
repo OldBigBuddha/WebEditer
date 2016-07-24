@@ -3,7 +3,9 @@ package com.ubuntu.inschool.oji.webediter;
 import android.content.DialogInterface;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -29,6 +31,26 @@ public class EditActivity extends AppCompatActivity implements ViewPager.OnPageC
     final String[] PAGE_TITLE = {"index.html", "style.css", "index.js"};
     Toolbar toolbar;
 
+    FragmentPagerAdapter adapter = new FragmentPagerAdapter(getSupportFragmentManager()) {
+        @Override
+        public Fragment getItem(int position) {
+            return BlankFragment.newInstance(position + 1);
+        }
+
+        @Override
+        public CharSequence getPageTitle(int position) {
+            CharSequence page_char = "Page" + position;
+                return PAGE_TITLE[position];
+//            return page_char;
+        }
+
+        @Override
+        public int getCount() {
+            return PAGE_TITLE.length;
+        }
+    };
+
+
     public EditActivity() {
     }
 
@@ -41,24 +63,6 @@ public class EditActivity extends AppCompatActivity implements ViewPager.OnPageC
         tabLayout = (TabLayout)findViewById(R.id.tabs);
         viewPager = (ViewPager)findViewById(R.id.pager);
 
-        FragmentPagerAdapter adapter = new FragmentPagerAdapter(getSupportFragmentManager()) {
-            @Override
-            public Fragment getItem(int position) {
-                return BlankFragment.newInstance(position + 1);
-            }
-
-            @Override
-            public CharSequence getPageTitle(int position) {
-                return PAGE_TITLE[position];
-            }
-
-
-
-            @Override
-            public int getCount() {
-                return PAGE_TITLE.length;
-            }
-        };
 
         setSupportActionBar(toolbar);
 
@@ -157,8 +161,10 @@ public class EditActivity extends AppCompatActivity implements ViewPager.OnPageC
                 switch (which) {
                     case 0:
                         tabLayout.addTab(tabLayout.newTab().setText("HTMLFile") );
-                        viewPager.setAdapter(adapter_addTab);
-                        viewPager.addOnPageChangeListener(this);
+
+//                        viewPager.setAdapter(adapter);
+//                        viewPager.addOnPageChangeListener(EditActivity.this);
+//                        tabLayout.setupWithViewPager(viewPager);
                         break;
                     case 1:
                         tabLayout.addTab(tabLayout.newTab().setText("CSSFile"));
@@ -166,8 +172,10 @@ public class EditActivity extends AppCompatActivity implements ViewPager.OnPageC
                     case 2:
                         tabLayout.addTab(tabLayout.newTab().setText("JavaScriptFile"));
                         break;
-
                 }
+
+
+
 //
 //                tabLayout.addTab(tabLayout.newTab().setText("TAB_NEW"));
 
