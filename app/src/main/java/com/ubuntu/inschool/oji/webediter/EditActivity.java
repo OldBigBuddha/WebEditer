@@ -1,6 +1,8 @@
 package com.ubuntu.inschool.oji.webediter;
 
+import android.content.Context;
 import android.content.DialogInterface;
+import android.os.Environment;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -18,6 +20,7 @@ import android.widget.EditText;
 
 import com.ubuntu.inschool.oji.webediter.Fragments.BlankFragment;
 
+import java.io.File;
 import java.util.ArrayList;
 
 public class EditActivity extends AppCompatActivity implements ViewPager.OnPageChangeListener{
@@ -34,6 +37,8 @@ public class EditActivity extends AppCompatActivity implements ViewPager.OnPageC
     ArrayList<String> page_title = new ArrayList<String>();
     Toolbar toolbar;
 
+    File dateFilePath;
+
     FragmentPagerAdapter adapter = new FragmentPagerAdapter(getSupportFragmentManager()) {
         @Override
         public Fragment getItem(int position) {
@@ -44,12 +49,12 @@ public class EditActivity extends AppCompatActivity implements ViewPager.OnPageC
         public CharSequence getPageTitle(int position) {
             CharSequence page_char = "Page" + position;
 //                return PAGE_TITLE[position];
-            return page_char;
+            return page_title.get(position);
         }
 
         @Override
         public int getCount() {
-            return PAGE_TITLE.length;
+            return page_title.size();
         }
     };
 
@@ -66,6 +71,7 @@ public class EditActivity extends AppCompatActivity implements ViewPager.OnPageC
         tabLayout = (TabLayout)findViewById(R.id.tabs);
         viewPager = (ViewPager)findViewById(R.id.pager);
 
+//        dateFilePath = new Context.getFilesDir();
 
         setSupportActionBar(toolbar);
 
@@ -169,11 +175,11 @@ public class EditActivity extends AppCompatActivity implements ViewPager.OnPageC
                     case 0:
                         EditActivity.this.makeDialog();
 
-                        tabLayout.addTab(tabLayout.newTab().setText("HTMLFile") );
-
-                        viewPager.setAdapter(adapter);
-                        viewPager.addOnPageChangeListener(EditActivity.this);
-                        tabLayout.setupWithViewPager(viewPager);
+//                        tabLayout.addTab(tabLayout.newTab().setText("HTMLFile") );
+//
+//                        viewPager.setAdapter(adapter);
+//                        viewPager.addOnPageChangeListener(EditActivity.this);
+//                        tabLayout.setupWithViewPager(viewPager);
                         break;
                     case 1:
                         tabLayout.addTab(tabLayout.newTab().setText("CSSFile"));
@@ -225,6 +231,9 @@ public class EditActivity extends AppCompatActivity implements ViewPager.OnPageC
                 String fileName;
                 fileName = editText_FileName.getText().toString();
                 page_title.add(fileName);
+
+                tabLayout.addTab(tabLayout.newTab().setText(fileName) );
+                viewPager.setAdapter(adapter);
             }
         });
         nameDig.setNegativeButton("キャンセル", new DialogInterface.OnClickListener() {
@@ -235,6 +244,11 @@ public class EditActivity extends AppCompatActivity implements ViewPager.OnPageC
         });
 
         nameDig.create().show();
+
+    }
+
+    private void mkdir () {
+        File mkdirPathName = getFilesDir();
 
     }
 }
