@@ -19,10 +19,10 @@ public class BlankFragment extends Fragment {
         // Required empty public constructor
     }
 
-    public static BlankFragment newInstance() {
+    public static BlankFragment newInstance(String title) {
         BlankFragment fragment = new BlankFragment();
         Bundle args = new Bundle();
-//        args.putInt(ARG_PARAM, page);
+        args.putString("title", title);
         fragment.setArguments(args);
         return fragment;
     }
@@ -33,9 +33,8 @@ public class BlankFragment extends Fragment {
         // Inflate the layout for this fragment
 //        int page = getArguments().getInt(ARG_PARAM, 0);
         View view = inflater.inflate(R.layout.fragment_blank, container, false);
+        this.title = getArguments().getString("title");
         EditText editText = (EditText) view.findViewById(R.id.editText);
-//        TextView textView = (TextView)view.findViewById(R.id.editText);
-//        textView.setText("Page" + page);
 //        editText.setText("Page" + (page + 1));
         editText.setText("test");
 

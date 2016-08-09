@@ -13,6 +13,7 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -25,18 +26,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.StringTokenizer;
 
-//(´◔౪◔) 「もしもしお母さーん！」
-//        母「なにー？」
-//        ( ◠‿◠ )「このマジキチなぁ～にぃ～？？」
-//        　　　 ＿＿_
-//        　　／L(՞ةڼ◔) ／＼
-//        　／|￣￣￣￣|＼／
-//        　　|　　　　|／
-//        　　
-//        母「あー○○か。今度燃えるゴミに出すよ。」
-
 public class EditActivity extends AppCompatActivity implements ViewPager.OnPageChangeListener{
-
 
     AlertDialog alertDialog;
     AlertDialog.Builder ADBuilder;
@@ -47,32 +37,11 @@ public class EditActivity extends AppCompatActivity implements ViewPager.OnPageC
 
     TabLayout tabLayout;
     ViewPager viewPager;
-    ArrayList<String> page_title = new ArrayList<>();
     Toolbar toolbar;
 
     File dateFilePath;
 
-    FragmentPagerAdapter adapter = new FragmentPagerAdapter(getSupportFragmentManager()) {
-        @Override
-        public Fragment getItem(int position) {
-//            BlankFragment fragment = BlankFragment.newInstance();
-//            fragmentArray.add(fragment);
-            return fragmentArray.get(position);
-        }
-
-        @Override
-        public CharSequence getPageTitle(int position) {
-            CharSequence page_char = "Page" + position;
-//                return PAGE_TITLE[position];
-//            return page_title.get(position);
-            return "んほおおおおおおお";
-        }
-
-        @Override
-        public int getCount() {
-            return fragmentArray.size();
-        }
-    };
+    FragmentPagerAdapter adapter;
 
 
     @Override
@@ -107,19 +76,38 @@ public class EditActivity extends AppCompatActivity implements ViewPager.OnPageC
                 });
 
         alertDialog = ADBuilder.create();
+
         alertDialog.show();
 
-        tabLayout.addTab(tabLayout.newTab().setText("Tab 1"));
-        tabLayout.addTab(tabLayout.newTab().setText("Tab 2"));
-        tabLayout.addTab(tabLayout.newTab().setText("Tab 3"));
+//        tabLayout.addTab(tabLayout.newTab().setText("Tab 1"));
+//        tabLayout.addTab(tabLayout.newTab().setText("Tab 2"));
+//        tabLayout.addTab(tabLayout.newTab().setText("Tab 3"));
 
-        page_title.add("index.html");
-        page_title.add("style.css");
-        page_title.add("index.js");
+        BlankFragment fragmentHTML  = BlankFragment.newInstance("index.html");
+        BlankFragment fragmentCSS   = BlankFragment.newInstance("style.css");
+        BlankFragment fragmentJS    = BlankFragment.newInstance("index.js");
 
-        fragmentArray.add(BlankFragment.newInstance());
-        fragmentArray.add(BlankFragment.newInstance());
-        fragmentArray.add(BlankFragment.newInstance());
+        fragmentArray.add(fragmentHTML);
+        fragmentArray.add(fragmentCSS);
+        fragmentArray.add(fragmentJS);
+
+        adapter = new FragmentPagerAdapter(getSupportFragmentManager()) {
+            @Override
+            public Fragment getItem(int position) {
+                return fragmentArray.get(position);
+            }
+
+            @Override
+            public CharSequence getPageTitle(int position) {
+                String title = fragmentArray.get(position).getArguments().getString("title");
+                return title;
+            }
+
+            @Override
+            public int getCount() {
+                return fragmentArray.size();
+            }
+        };
 
         viewPager.setAdapter(adapter);
         viewPager.addOnPageChangeListener(this);
@@ -169,18 +157,6 @@ public class EditActivity extends AppCompatActivity implements ViewPager.OnPageC
 
         final int ID = item.getItemId();
 
-        final FragmentPagerAdapter adapter_addTab = new FragmentPagerAdapter(getSupportFragmentManager()) {
-            @Override
-            public Fragment getItem(int position) {
-                return BlankFragment.newInstance();
-            }
-
-            @Override
-            public int getCount() {
-                return 0;
-            }
-        };
-
         final CharSequence[] ITEMS = {"HTML","CSS","JavaScript"};
         AlertDialog.Builder addDig = new AlertDialog.Builder(EditActivity.this);
         addDig.setTitle("ファイル形式を選択してください");
@@ -197,12 +173,10 @@ public class EditActivity extends AppCompatActivity implements ViewPager.OnPageC
                     case 1:
                         extension = "css";
                         EditActivity.this.makeDialog(extension);
-//                        tabLayout.addTab(tabLayout.newTab().setText("CSSFile"));
                         break;
                     case 2:
                         extension = "js";
                         EditActivity.this.makeDialog(extension);
-//                        tabLayout.addTab(tabLayout.newTab().setText("JavaScriptFile"));
                         break;
                 }
 
@@ -224,7 +198,6 @@ public class EditActivity extends AppCompatActivity implements ViewPager.OnPageC
 
     @Override
     public void onPageSelected(int position) {
-
     }
 
     @Override
@@ -235,6 +208,7 @@ public class EditActivity extends AppCompatActivity implements ViewPager.OnPageC
     public void makeDialog(final String extension) {
         AlertDialog.Builder nameDig = new AlertDialog.Builder(EditActivity.this);
         final EditText editText_FileName = new EditText(EditActivity.this);
+        editText_FileName.setSingleLine(true);
         nameDig.setTitle("ファイル名を入力してください（拡張子不要）");
         nameDig.setView(editText_FileName);
         nameDig.setPositiveButton("MakeFile", new DialogInterface.OnClickListener() {
@@ -242,14 +216,15 @@ public class EditActivity extends AppCompatActivity implements ViewPager.OnPageC
             public void onClick(DialogInterface dialog, int which) {
                 String fileName;
                 fileName = editText_FileName.getText().toString() + "." + extension;
-                page_title.add(fileName);
+
+                Fragment fragment = BlankFragment.newInstance(fileName);
+                fragmentArray.add(fragment);
 
                 tabLayout.addTab(tabLayout.newTab().setText(fileName));
                 viewPager.setAdapter(adapter);
 
                 int ArrySize = fragmentArray.size();
                 TabLayout.Tab tab = tabLayout.getTabAt(ArrySize - 1);
-//                Toast.makeText(EditActivity.this,fragmentArray.size() + "",Toast.LENGTH_LONG).show();
                 tab.select();
             }
         });
@@ -270,12 +245,3 @@ public class EditActivity extends AppCompatActivity implements ViewPager.OnPageC
     }
 }
 
-
-//＿¶￣|○ ｳﾝｺﾓﾗｼﾁｬｯﾀ･･･
-
-//ブルブルブルブルアイ！✌(՞ਊ՞✌三✌՞ਊ՞)✌アイ！✌(՞ਊ՞✌三✌՞ਊ՞)✌ブ・ル・ベ・リ・アイ！！
-//        ✌(՞ਊ՞✌三✌՞ਊ՞)✌ブルブルブルブルアイ！✌(՞ਊ՞✌三✌՞ਊ՞)✌アイ！✌(՞ਊ՞✌三✌՞ਊ՞)✌ブ・ル・ベ・リ・アイ！！✌(՞ਊ՞✌三✌՞ਊ՞)✌ブルブルブルブルアイ！✌(՞ਊ՞✌三✌՞ਊ՞)✌アイ！✌(՞ਊ՞✌三✌՞ਊ՞)✌ブ・ル・ベ・リ・アイ！！
-//        ✌(՞ਊ՞✌三✌՞ਊ՞)✌ブルブルブルブルアイ！✌(՞ਊ՞✌三✌՞ਊ՞)✌アイ！✌(՞ਊ՞✌三✌՞ਊ՞)✌ブ・ル・ベ・リ・アイ！！✌(՞ਊ՞✌三✌՞ਊ՞)✌ブルブルブルブルアイ！✌(՞ਊ՞✌三✌՞ਊ՞)✌アイ！✌(՞ਊ՞✌三✌՞ਊ՞)✌ブ・ル・ベ・リ・アイ！！
-//        ✌(՞ਊ՞✌三✌՞ਊ՞)✌ブルブルブルブルアイ！✌(՞ਊ՞✌三✌՞ਊ՞)✌アイ！✌(՞ਊ՞✌三✌՞ਊ՞)✌ブ・ル・ベ・リ・アイ！！✌(՞ਊ՞✌三✌՞ਊ՞)✌ブルブルブルブルアイ！✌(՞ਊ՞✌三✌՞ਊ՞)✌アイ！✌(՞ਊ՞✌三✌՞ਊ՞)✌ブ・ル・ベ・リ・アイ！！
-//        ✌(՞ਊ՞✌三✌՞ਊ՞)✌ブルブルブルブルアイ！✌(՞ਊ՞✌三✌՞ਊ՞)✌アイ！✌(՞ਊ՞✌三✌՞ਊ՞)✌ブ・ル・ベ・リ・アイ！！✌(՞ਊ՞✌三✌՞ਊ՞)✌ブルブルブルブルアイ！✌(՞ਊ՞✌三✌՞ਊ՞)✌アイ！✌(՞ਊ՞✌三✌՞ਊ՞)✌ブ・ル・ベ・リ・アイ！！
-//        ✌(՞ਊ՞✌三✌՞ਊ՞)✌ブルブルブルブルアイ！✌(՞ਊ՞✌三✌՞ਊ՞)✌アイ！✌(՞ਊ՞✌三✌՞ਊ՞)✌ブ・ル・ベ・リ・アイ！！✌(՞ਊ՞✌三✌՞ਊ՞)✌
