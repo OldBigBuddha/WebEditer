@@ -53,6 +53,7 @@ public class EditActivity extends AppCompatActivity implements ViewPager.OnPageC
         tabLayout = (TabLayout)findViewById(R.id.tabs);
         viewPager = (ViewPager)findViewById(R.id.pager);
 
+
 //        dateFilePath = new Context.getFilesDir();
 
         setSupportActionBar(toolbar);
