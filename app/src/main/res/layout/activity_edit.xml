@@ -1,4 +1,4 @@
-<LinearLayout android:orientation="vertical"
+<android.support.v4.widget.DrawerLayout
     android:layout_height="match_parent"
     android:layout_width="match_parent"
     xmlns:android="http://schemas.android.com/apk/res/android"
@@ -11,16 +11,10 @@
         android:navigationIcon="@mipmap/ic_launcher"
         android:id="@+id/tool_bar" />
 
-    <!--<EditText-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="match_parent"-->
-        <!--android:id="@+id/editText"-->
-        <!--android:background="#00000000"-->
-        <!--android:gravity="top|left" />-->
-
     <android.support.design.widget.TabLayout
         android:id="@+id/tabs"
         app:tabMode="scrollable"
+        app:tabSelectedTextColor="#f50d31"
         app:tabTextAppearance="@android:style/TextAppearance.Widget.TabWidget"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
@@ -29,6 +23,14 @@
         android:id="@+id/pager"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
-        <!--android:layout_below/>-->
 
-</LinearLayout>
+    <!--<android.support.design.widget.NavigationView-->
+        <!--android:id="@+id/navigation_view"-->
+        <!--android:layout_width="100sp"-->
+        <!--android:layout_height="match_parent"-->
+        <!--app:headerLayout="@layout/navigation_header"-->
+        <!--app:menu="@menu/navigation_menu">-->
+
+    <!--</android.support.design.widget.NavigationView>-->
+
+</android.support.v4.widget.DrawerLayout>

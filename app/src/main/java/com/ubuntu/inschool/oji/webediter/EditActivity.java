@@ -23,8 +23,11 @@ import android.widget.Toast;
 import com.ubuntu.inschool.oji.webediter.Fragments.BlankFragment;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.StringTokenizer;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class EditActivity extends AppCompatActivity implements ViewPager.OnPageChangeListener{
 
@@ -40,6 +43,8 @@ public class EditActivity extends AppCompatActivity implements ViewPager.OnPageC
     Toolbar toolbar;
 
     File dateFilePath;
+    String filePath;
+    String projectPath;
 
     FragmentPagerAdapter adapter;
 
@@ -54,16 +59,8 @@ public class EditActivity extends AppCompatActivity implements ViewPager.OnPageC
         viewPager = (ViewPager)findViewById(R.id.pager);
 
 
-//        dateFilePath = new Context.getFilesDir();
-
-        setSupportActionBar(toolbar);
-
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
-        final View VIEW = EditActivity.this.getLayoutInflater().inflate(R.layout.context_main, null);
-
-
         ADBuilder = new AlertDialog.Builder(EditActivity.this);
+        final View VIEW = EditActivity.this.getLayoutInflater().inflate(R.layout.context_main, null);
 
         ADBuilder.setTitle("Project's Name")
                 .setView(VIEW)
@@ -72,7 +69,23 @@ public class EditActivity extends AppCompatActivity implements ViewPager.OnPageC
                     public void onClick(DialogInterface dialog, int which) {
                         EditText editText_ProjectName = (EditText)VIEW.findViewById(R.id.editText_ProjectName);
                         EditActivity.this.projectName = editText_ProjectName.getText().toString();
-//                        super.onClick();
+
+                        filePath = getFilesDir().toString();
+                        projectPath = filePath + "/" + projectName;
+                        dateFilePath = new File(projectPath);
+                        Toast.makeText(EditActivity.this,dateFilePath.toString(),Toast.LENGTH_LONG).show();
+
+                        if (!dateFilePath.exists()) {
+                            dateFilePath.mkdir();
+
+                            makeFile("index.html");
+                            makeFile("style.css");
+                            makeFile("index.js");
+
+                        }else {
+
+                        }
+
                     }
                 });
 
@@ -80,9 +93,10 @@ public class EditActivity extends AppCompatActivity implements ViewPager.OnPageC
 
         alertDialog.show();
 
-//        tabLayout.addTab(tabLayout.newTab().setText("Tab 1"));
-//        tabLayout.addTab(tabLayout.newTab().setText("Tab 2"));
-//        tabLayout.addTab(tabLayout.newTab().setText("Tab 3"));
+
+        setSupportActionBar(toolbar);
+
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         BlankFragment fragmentHTML  = BlankFragment.newInstance("index.html");
         BlankFragment fragmentCSS   = BlankFragment.newInstance("style.css");
@@ -114,35 +128,6 @@ public class EditActivity extends AppCompatActivity implements ViewPager.OnPageC
         viewPager.addOnPageChangeListener(this);
 
         tabLayout.setupWithViewPager(viewPager);
-
-//        final String DPATH = "/storage/sdcard1/com.ubuntu.inschool.oji.webedite/";
-//        final String FPATH = DPATH + projectName;
-//        File newDir = new File(FPATH);
-//
-//        File htmlFile = new File(FPATH + "/index.html");
-//        try {
-//            if (htmlFile.createNewFile()) {
-//                Log.d("NewFileLog", "OK");
-//            } else {
-//                Log.d("NewFileLog", "NOT");
-//            }
-//
-//        }catch (IOException e) {
-//            Log.d("IOException", e + "");
-//        }
-//
-//        File cssFile = new File(FPATH + "/style.css");
-//        try {
-//            if (cssFile.createNewFile()) {
-//                Log.d("NewFileLog", "OK");
-//            } else {
-//                Log.d("NewFileLog", "NOT");
-//
-//            }
-//        }catch (IOException e) {
-//            Log.d("IOException", e + "");
-//        }
-
 
     }
 
@@ -216,13 +201,26 @@ public class EditActivity extends AppCompatActivity implements ViewPager.OnPageC
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 String fileName;
-                fileName = editText_FileName.getText().toString() + "." + extension;
+                String fileName_user;
+
+                fileName_user = editText_FileName.getText().toString();
+
+//                String regex = "/.";
+//                fileName_user = fileName_user.replaceAll(regex, "");
+                Log.d("FileName", fileName_user);
+                fileName_user = fileName_user.split("\\.")[0];
+                Toast.makeText(EditActivity.this, fileName_user,Toast.LENGTH_LONG).show();
+
+
+                fileName = fileName_user + "." + extension;
 
                 Fragment fragment = BlankFragment.newInstance(fileName);
                 fragmentArray.add(fragment);
 
                 tabLayout.addTab(tabLayout.newTab().setText(fileName));
                 viewPager.setAdapter(adapter);
+
+                makeFile(fileName);
 
                 int ArrySize = fragmentArray.size();
                 TabLayout.Tab tab = tabLayout.getTabAt(ArrySize - 1);
@@ -242,6 +240,19 @@ public class EditActivity extends AppCompatActivity implements ViewPager.OnPageC
 
     private void mkdir () {
         File mkdirPathName = getFilesDir();
+
+    }
+
+    private void makeFile(String fileName) {
+        File newFile = new File(projectPath + "/" + fileName );
+        try {
+            if (!newFile.exists()) {
+                newFile.createNewFile();
+            }
+
+        }catch (IOException e) {
+            Log.d("MakeNewFile", e + "");
+        }
 
     }
 }
