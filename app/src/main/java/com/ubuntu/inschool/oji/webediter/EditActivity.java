@@ -276,8 +276,7 @@ public class EditActivity extends AppCompatActivity implements ViewPager.OnPageC
         try {
             if (!newFile.exists()) {
                 newFile.createNewFile();
-                EditText editText = (EditText)findViewById(R.id.editText);
-                saveCode(fileName, editText.getText().toString());
+                saveCode();
             }
         }catch (IOException e) {
             Log.d("MakeNewFile", e + "");
@@ -306,7 +305,6 @@ public class EditActivity extends AppCompatActivity implements ViewPager.OnPageC
 
                 fragmentArray.remove(position);
                 adapter.notifyDataSetChanged();
-//                tabLayout.removeTabAt(position);
                 arrayList.remove(position);
                 arrayadapter.notifyDataSetChanged();
 
@@ -319,16 +317,25 @@ public class EditActivity extends AppCompatActivity implements ViewPager.OnPageC
 
     }
 
-    private void saveCode(String fileName, String text) {
+    private void saveCode() {
         try {
 
-            FileOutputStream fos = new FileOutputStream(new File(projectPath + "/" + fileName));
-            BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(fos, "UTF-8"));
+            for (int i = 0; i < fragmentArray.size(); i++) {
 
-            //追記する
-            bw.write(text);
-            bw.flush();
-            bw.close();
+                FileOutputStream fos = new FileOutputStream(new File(projectPath + "/" + fragmentArray.get(i).toString()));
+                BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(fos, "UTF-8"));
+
+                //追記する
+
+                if (((BlankFragment)fragmentArray.get(i)).editText.getText().toString() == null) {
+                    Log.d("NulLCheck", "Nullpo");
+                }
+                bw.write(((BlankFragment)fragmentArray.get(i)).editText.getText().toString());
+                bw.flush();
+                bw.close();
+
+
+            }
         } catch (IOException e) {
             // TODO 自動生成された catch ブロック
             e.printStackTrace();

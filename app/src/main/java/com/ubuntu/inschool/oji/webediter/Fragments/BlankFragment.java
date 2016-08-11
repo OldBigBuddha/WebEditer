@@ -18,6 +18,7 @@ public class BlankFragment extends Fragment {
 
     public String title;
     public String code;
+    public EditText editText;
 
     public BlankFragment() {
         // Required empty public constructor
@@ -39,7 +40,7 @@ public class BlankFragment extends Fragment {
         String extension;
         this.title = getArguments().getString("title");
         extension = getArguments().getString("extension");
-        EditText editText = (EditText) view.findViewById(R.id.editText);
+        editText = (EditText) view.findViewById(R.id.editText);
 
         String fileName = EditActivity.fileName_user;
 
@@ -63,15 +64,15 @@ public class BlankFragment extends Fragment {
                         "\t<body>\n" +
                         "\t\t<h1>HelloWorld</h1>\n" +
                         "\t</body>\n" +
-                        "<html>";
+                        "<html>\n";
                 break;
             case "css":
-                BlankFragment.this.code = "h1 {" +
-                        "\tcolor: blue;" +
-                        "}";
+                BlankFragment.this.code = "h1 {\n" +
+                        "\tcolor: blue;\n" +
+                        "}\n";
                 break;
             case "js":
-                BlankFragment.this.code = "";
+                BlankFragment.this.code = "alert(\"HelloWorld\")";
                 break;
         }
         editText.setText(code);
