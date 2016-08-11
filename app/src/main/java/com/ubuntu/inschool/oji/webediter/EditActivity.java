@@ -1,9 +1,15 @@
 package com.ubuntu.inschool.oji.webediter;
 
+import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.SharedPreferences;
+import android.os.Environment;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -26,9 +32,15 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.StringTokenizer;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class EditActivity extends AppCompatActivity implements ViewPager.OnPageChangeListener{
 
@@ -271,16 +283,16 @@ public class EditActivity extends AppCompatActivity implements ViewPager.OnPageC
                 String item = (String)pointingList.getItemAtPosition(position);
                 ArrayAdapter<String> stringArrayAdapter = (ArrayAdapter<String>)listView.getAdapter();
 
-                fragmentArray.remove(position);
-                tabLayout.removeTabAt(position);
-                arrayList.remove(position);
-                viewPager.notifyAll();
-                adapter.notifyDataSetChanged();
-//                stringArrayAdapter.remove(item);
+                stringArrayAdapter.remove(item);
 
                 String positingFileName = arrayList.get(position);
                 File deleteFile = new File(dateFilePath.toString() + "/" + positingFileName);
                 deleteFile.delete();
+
+                fragmentArray.remove(position);
+                tabLayout.removeTabAt(position);
+                arrayList.remove(position);
+
 
                 return false;
             }
