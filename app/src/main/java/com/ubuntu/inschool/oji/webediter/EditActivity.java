@@ -281,9 +281,9 @@ public class EditActivity extends AppCompatActivity implements ViewPager.OnPageC
 
                 ListView pointingList = (ListView)parent;
                 String item = (String)pointingList.getItemAtPosition(position);
-                ArrayAdapter<String> stringArrayAdapter = (ArrayAdapter<String>)listView.getAdapter();
+                arrayadapter = (ArrayAdapter<String>)listView.getAdapter();
 
-                stringArrayAdapter.remove(item);
+//                stringArrayAdapter.remove(item);
 
                 String positingFileName = arrayList.get(position);
                 File deleteFile = new File(dateFilePath.toString() + "/" + positingFileName);
@@ -291,6 +291,7 @@ public class EditActivity extends AppCompatActivity implements ViewPager.OnPageC
 
                 fragmentArray.remove(position);
                 tabLayout.removeTabAt(position);
+                arrayadapter.notifyDataSetChanged();
                 arrayList.remove(position);
 
 
