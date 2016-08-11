@@ -276,9 +276,9 @@ public class EditActivity extends AppCompatActivity implements ViewPager.OnPageC
         try {
             if (!newFile.exists()) {
                 newFile.createNewFile();
-                saveCode(fileName);
+                EditText editText = (EditText)findViewById(R.id.editText);
+                saveCode(fileName, editText.getText().toString());
             }
-
         }catch (IOException e) {
             Log.d("MakeNewFile", e + "");
         }
@@ -319,17 +319,14 @@ public class EditActivity extends AppCompatActivity implements ViewPager.OnPageC
 
     }
 
-    private void saveCode(String fileName) {
-
-        EditText editText_Code = (EditText)findViewById(R.id.editText);
-
+    private void saveCode(String fileName, String text) {
         try {
 
             FileOutputStream fos = new FileOutputStream(new File(projectPath + "/" + fileName));
             BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(fos, "UTF-8"));
 
             //追記する
-            bw.write(editText_Code.getText().toString());
+            bw.write(text);
             bw.flush();
             bw.close();
         } catch (IOException e) {
