@@ -153,47 +153,48 @@ public class EditActivity extends AppCompatActivity implements ViewPager.OnPageC
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.edit_menu, menu);
+
 //        return true;
         return super.onCreateOptionsMenu(menu);
     }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-
-        final int ID = item.getItemId();
-
-        final CharSequence[] ITEMS = {"HTML","CSS","JavaScript"};
-        AlertDialog.Builder addDig = new AlertDialog.Builder(EditActivity.this);
-        addDig.setTitle("ファイル形式を選択してください");
-        addDig.setItems(ITEMS, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-
-                String extension;
-                switch (which) {
-                    case 0:
-                        extension = "html";
-                        EditActivity.this.makeDialog(extension);
-                        break;
-                    case 1:
-                        extension = "css";
-                        EditActivity.this.makeDialog(extension);
-                        break;
-                    case 2:
-                        extension = "js";
-                        EditActivity.this.makeDialog(extension);
-                        break;
-                }
-
-            }
-        });
-
-
-        addDig.create().show();
-
-        return super.onOptionsItemSelected(item);
-
-    }
+//    @Override
+//    public boolean onOptionsItemSelected(MenuItem item) {
+//
+//        final int ID = item.getItemId();
+//
+//        final CharSequence[] ITEMS = {"HTML","CSS","JavaScript"};
+//        AlertDialog.Builder addDig = new AlertDialog.Builder(EditActivity.this);
+//        addDig.setTitle("ファイル形式を選択してください");
+//        addDig.setItems(ITEMS, new DialogInterface.OnClickListener() {
+//            @Override
+//            public void onClick(DialogInterface dialog, int which) {
+//
+//                String extension;
+//                switch (which) {
+//                    case 0:
+//                        extension = "html";
+//                        EditActivity.this.makeDialog(extension);
+//                        break;
+//                    case 1:
+//                        extension = "css";
+//                        EditActivity.this.makeDialog(extension);
+//                        break;
+//                    case 2:
+//                        extension = "js";
+//                        EditActivity.this.makeDialog(extension);
+//                        break;
+//                }
+//
+//            }
+//        });
+//
+//
+//        addDig.create().show();
+//
+//        return super.onOptionsItemSelected(item);
+//
+//    }
 
 
     @Override
