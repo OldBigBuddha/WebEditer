@@ -62,7 +62,7 @@ public class BlankFragment extends Fragment {
                         "\t</head>\n" +
                         "\t<body>\n" +
                         "\t\t<h1>HelloWorld</h1>\n" +
-                        "\t</body>" +
+                        "\t</body>\n" +
                         "<html>";
                 break;
             case "css":
