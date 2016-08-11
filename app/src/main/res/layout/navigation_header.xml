@@ -5,8 +5,13 @@
 
     <TextView
         android:id="@+id/navigation_textView"
+        android:gravity="center_horizontal"
         android:text="Project's Name"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:textColor="#000"
+        android:textSize="40px"
+        android:textIsSelectable="false" />
 
 </LinearLayout>

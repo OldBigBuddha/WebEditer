@@ -2,6 +2,8 @@ package com.ubuntu.inschool.oji.webediter;
 
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Environment;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
@@ -17,14 +19,25 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
+import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.ubuntu.inschool.oji.webediter.Fragments.BlankFragment;
 
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.StringTokenizer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -35,7 +48,6 @@ public class EditActivity extends AppCompatActivity implements ViewPager.OnPageC
     AlertDialog.Builder ADBuilder;
 
     String projectName;
-    Fragment fragmentPage;
     ArrayList<Fragment> fragmentArray = new ArrayList<>();
 
     TabLayout tabLayout;
@@ -48,6 +60,13 @@ public class EditActivity extends AppCompatActivity implements ViewPager.OnPageC
 
     FragmentPagerAdapter adapter;
 
+    String fileName;
+    public static String fileName_user;
+
+    ArrayList<String> arrayList;
+    ArrayAdapter<String> arrayadapter;
+    ListView listView;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,7 +76,6 @@ public class EditActivity extends AppCompatActivity implements ViewPager.OnPageC
         toolbar = (Toolbar)findViewById(R.id.tool_bar);
         tabLayout = (TabLayout)findViewById(R.id.tabs);
         viewPager = (ViewPager)findViewById(R.id.pager);
-
 
         ADBuilder = new AlertDialog.Builder(EditActivity.this);
         final View VIEW = EditActivity.this.getLayoutInflater().inflate(R.layout.context_main, null);
@@ -86,6 +104,8 @@ public class EditActivity extends AppCompatActivity implements ViewPager.OnPageC
 
                         }
 
+                        setNavigationFiletree();
+
                     }
                 });
 
@@ -98,9 +118,9 @@ public class EditActivity extends AppCompatActivity implements ViewPager.OnPageC
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        BlankFragment fragmentHTML  = BlankFragment.newInstance("index.html");
-        BlankFragment fragmentCSS   = BlankFragment.newInstance("style.css");
-        BlankFragment fragmentJS    = BlankFragment.newInstance("index.js");
+        BlankFragment fragmentHTML  = BlankFragment.newInstance("index.html","html");
+        BlankFragment fragmentCSS   = BlankFragment.newInstance("style.css","css");
+        BlankFragment fragmentJS    = BlankFragment.newInstance("index.js","js");
 
         fragmentArray.add(fragmentHTML);
         fragmentArray.add(fragmentCSS);
@@ -128,7 +148,6 @@ public class EditActivity extends AppCompatActivity implements ViewPager.OnPageC
         viewPager.addOnPageChangeListener(this);
 
         tabLayout.setupWithViewPager(viewPager);
-
     }
 
     @Override
@@ -200,13 +219,9 @@ public class EditActivity extends AppCompatActivity implements ViewPager.OnPageC
         nameDig.setPositiveButton("MakeFile", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                String fileName;
-                String fileName_user;
 
                 fileName_user = editText_FileName.getText().toString();
 
-//                String regex = "/.";
-//                fileName_user = fileName_user.replaceAll(regex, "");
                 Log.d("FileName", fileName_user);
                 fileName_user = fileName_user.split("\\.")[0];
                 Toast.makeText(EditActivity.this, fileName_user,Toast.LENGTH_LONG).show();
@@ -214,7 +229,7 @@ public class EditActivity extends AppCompatActivity implements ViewPager.OnPageC
 
                 fileName = fileName_user + "." + extension;
 
-                Fragment fragment = BlankFragment.newInstance(fileName);
+                Fragment fragment = BlankFragment.newInstance(fileName, extension);
                 fragmentArray.add(fragment);
 
                 tabLayout.addTab(tabLayout.newTab().setText(fileName));
@@ -225,6 +240,8 @@ public class EditActivity extends AppCompatActivity implements ViewPager.OnPageC
                 int ArrySize = fragmentArray.size();
                 TabLayout.Tab tab = tabLayout.getTabAt(ArrySize - 1);
                 tab.select();
+
+                setNavigationFiletree();
             }
         });
         nameDig.setNegativeButton("キャンセル", new DialogInterface.OnClickListener() {
@@ -238,22 +255,73 @@ public class EditActivity extends AppCompatActivity implements ViewPager.OnPageC
 
     }
 
-    private void mkdir () {
-        File mkdirPathName = getFilesDir();
-
-    }
-
     private void makeFile(String fileName) {
         File newFile = new File(projectPath + "/" + fileName );
         try {
             if (!newFile.exists()) {
                 newFile.createNewFile();
+                saveCode(fileName);
             }
 
         }catch (IOException e) {
             Log.d("MakeNewFile", e + "");
         }
 
+    }
+
+    private void setNavigationFiletree() {
+        listView = (ListView)findViewById(R.id.treelist);
+        TextView textView = (TextView)findViewById(R.id.navigation_textView);
+        textView.setText(projectName);
+        arrayList = new ArrayList(Arrays.asList(dateFilePath.list()));
+
+        listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+
+                ListView pointingList = (ListView)parent;
+                String item = (String)pointingList.getItemAtPosition(position);
+                ArrayAdapter<String> stringArrayAdapter = (ArrayAdapter<String>)listView.getAdapter();
+
+                stringArrayAdapter.remove(item);
+
+                tabLayout.removeTabAt(position);
+                adapter.removeTabPage(position);
+                String positingFileName = arrayList.get(position);
+                File deleteFile = new File(dateFilePath.toString() + "/" + positingFileName);
+                deleteFile.delete();
+
+                return false;
+            }
+        });
+
+        arrayadapter = new ArrayAdapter(this,android.R.layout.simple_expandable_list_item_1,arrayList);
+        listView.setAdapter(arrayadapter);
+
+    }
+
+    private void saveCode(String fileName) {
+
+        EditText editText_Code = (EditText)findViewById(R.id.editText);
+
+        try {
+
+            FileOutputStream fos = new FileOutputStream(new File(projectPath + "/" + fileName));
+            BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(fos, "UTF-8"));
+
+            //追記する
+            bw.write(editText_Code.getText().toString());
+            bw.flush();
+            bw.close();
+        } catch (IOException e) {
+            // TODO 自動生成された catch ブロック
+            e.printStackTrace();
+        }
+
+    }
+
+    private void removeTab(int position) {
+        tabLayout.removeTabAt(position);
     }
 }
 
