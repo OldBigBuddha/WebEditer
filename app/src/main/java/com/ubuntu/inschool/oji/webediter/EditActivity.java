@@ -300,7 +300,7 @@ public class EditActivity extends AppCompatActivity implements ViewPager.OnPageC
     }
 
     //ファイル新規作成
-    //TODO 別クラスに移行予定
+    //別クラスに移行予定
     private void makeFile(String fileName) {
         //作成ファイルのパスの取得
         File newFile = new File(projectPath + "/" + fileName );
@@ -356,7 +356,7 @@ public class EditActivity extends AppCompatActivity implements ViewPager.OnPageC
     }
 
     //中身の保存
-    //TODO 別クラスに移行予定
+    //別クラスに移行予定
     private void saveCode(String fileName) {
 
         try {
