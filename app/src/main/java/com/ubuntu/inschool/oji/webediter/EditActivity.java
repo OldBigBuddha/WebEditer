@@ -48,7 +48,7 @@ public class EditActivity extends AppCompatActivity implements ViewPager.OnPageC
     AlertDialog.Builder ADBuilder;
 
     String projectName;
-    ArrayList<Fragment> fragmentArray = new ArrayList<>();
+    ArrayList<BlankFragment> fragmentArray = new ArrayList<>();
 
     TabLayout tabLayout;
     ViewPager viewPager;
@@ -245,7 +245,7 @@ public class EditActivity extends AppCompatActivity implements ViewPager.OnPageC
 
                 fileName = fileName_user + "." + extension;
 
-                Fragment fragment = BlankFragment.newInstance(fileName, extension);
+                BlankFragment fragment = BlankFragment.newInstance(fileName, extension);
                 fragmentArray.add(fragment);
 
                 tabLayout.addTab(tabLayout.newTab().setText(fileName));
@@ -318,6 +318,7 @@ public class EditActivity extends AppCompatActivity implements ViewPager.OnPageC
     }
 
     private void saveCode() {
+
         try {
 
             for (int i = 0; i < fragmentArray.size(); i++) {
@@ -326,11 +327,10 @@ public class EditActivity extends AppCompatActivity implements ViewPager.OnPageC
                 BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(fos, "UTF-8"));
 
                 //追記する
+                EditText editText = fragmentArray.get(i).editText;
+                String code = editText.getText().toString();
 
-                if (((BlankFragment)fragmentArray.get(i)).editText.getText().toString() == null) {
-                    Log.d("NulLCheck", "Nullpo");
-                }
-                bw.write(((BlankFragment)fragmentArray.get(i)).editText.getText().toString());
+                bw.write(code);
                 bw.flush();
                 bw.close();
 
