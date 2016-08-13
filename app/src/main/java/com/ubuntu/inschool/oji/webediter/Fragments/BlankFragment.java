@@ -16,13 +16,13 @@ import com.ubuntu.inschool.oji.webediter.R;
 
 public class BlankFragment extends Fragment {
 
-    public String title;
-    public String code;
-    public EditText editText;
+    protected String title;
+    protected String code;
+    protected EditText editText;
 
     public BlankFragment() {
-        // Required empty public constructor
     }
+
 
     public static BlankFragment newInstance(String title, String extension) {
         BlankFragment fragment = new BlankFragment();
@@ -49,7 +49,7 @@ public class BlankFragment extends Fragment {
         } else {
             title = title.split("\\.")[0];
         }
-
+        
         if (extension == null) {
             Log.d("error", "fileExtensionNull");
         } else switch (extension) {
