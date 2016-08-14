@@ -300,7 +300,7 @@ public class EditActivity extends AppCompatActivity implements ViewPager.OnPageC
     }
 
     //ファイル新規作成
-    //TODO 別クラスに移行予定
+    //別クラスに移行予定
     private void makeFile(String fileName) {
         //作成ファイルのパスの取得
         File newFile = new File(projectPath + "/" + fileName );
@@ -382,5 +382,31 @@ public class EditActivity extends AppCompatActivity implements ViewPager.OnPageC
 //            e.printStackTrace();
 //        }
 //    }
+    //別クラスに移行予定
+    private void saveCode(String fileName) {
+
+        try {
+
+            for (int i = 0; i < fragmentArray.size(); i++) {
+                //保存するファイルのフルパス取得
+                File makePath = new File(projectPath + "/" + fileName);
+
+                //ファイルの描きだし関係初期化
+                FileOutputStream fos = new FileOutputStream(makePath);
+                BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(fos, "UTF-8"));
+
+                //Fragment内のeditTextのText取得
+                EditText editText = fragmentArray.get(i).editText;
+                String code = editText.getText().toString();
+
+                //ファイルの書き出し
+                bw.write(code);
+                bw.flush();
+                bw.close();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 }
 
