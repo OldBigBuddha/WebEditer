@@ -172,7 +172,7 @@ public class EditActivity extends AppCompatActivity implements ViewPager.OnPageC
                 if (id == R.id.save_tab) {
 
                     for (int i = 0; i < fragmentArray.size(); i++) {
-                        saveCode(fragmentArray.get(i).title);
+//                        saveCode(fragmentArray.get(i).title);
 
                     }
 
@@ -357,30 +357,30 @@ public class EditActivity extends AppCompatActivity implements ViewPager.OnPageC
 
     //中身の保存
     //TODO 別クラスに移行予定
-    private void saveCode(String fileName) {
-
-        try {
-
-            for (int i = 0; i < fragmentArray.size(); i++) {
-                //保存するファイルのフルパス取得
-                File makePath = new File(projectPath + "/" + fileName);
-
-                //ファイルの描きだし関係初期化
-                FileOutputStream fos = new FileOutputStream(makePath);
-                BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(fos, "UTF-8"));
-
-                //Fragment内のeditTextのText取得
-                EditText editText = fragmentArray.get(i).editText;
-                String code = editText.getText().toString();
-
-                //ファイルの書き出し
-                bw.write(code);
-                bw.flush();
-                bw.close();
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
+//    private void saveCode(String fileName) {
+//
+//        try {
+//
+//            for (int i = 0; i < fragmentArray.size(); i++) {
+//                //保存するファイルのフルパス取得
+//                File makePath = new File(projectPath + "/" + fileName);
+//
+//                //ファイルの描きだし関係初期化
+//                FileOutputStream fos = new FileOutputStream(makePath);
+//                BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(fos, "UTF-8"));
+//
+//                //Fragment内のeditTextのText取得
+//                EditText editText = fragmentArray.get(i).editText;
+//                String code = editText.getText().toString();
+//
+//                //ファイルの書き出し
+//                bw.write(code);
+//                bw.flush();
+//                bw.close();
+//            }
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+//    }
 }
 
