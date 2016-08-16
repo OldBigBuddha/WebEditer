@@ -3,6 +3,7 @@ package com.ubuntu.inschool.oji.webediter;
 import android.content.DialogInterface;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AlertDialog;
@@ -89,7 +90,9 @@ public class EditActivity extends AppCompatActivity implements ViewPager.OnPageC
 
         //画面追加を記録
         fragmentArray.add(fragmentHTML);
+//        fragmentHTML.save(projectPath,"index.html");
         fragmentArray.add(fragmentCSS);
+//        fragmentCSS.save(projectPath,"style.css");
 
         //FragmentAdapterの初期化
         adapter = new FragmentPagerAdapter(getSupportFragmentManager()) {
@@ -233,6 +236,7 @@ public class EditActivity extends AppCompatActivity implements ViewPager.OnPageC
                 //Fragmentの生成
                 BlankFragment fragment = BlankFragment.newInstance(fileName, extension);
                 fragmentArray.add(fragment);
+                fragment.save(projectPath, fileName);
 
                 //Tabの生成
                 tabLayout.addTab(tabLayout.newTab().setText(fileName));
@@ -321,7 +325,7 @@ public class EditActivity extends AppCompatActivity implements ViewPager.OnPageC
 
     //NavigationViewのtreeListにdataFilePath下のファイル一覧をセット
     private void setFileTreeOnNavigatinView() {
-        listView = (ListView)findViewById(R.id.treelist);
+        listView = (ListView)findViewById(R.id.treeList);
         TextView textView = (TextView)findViewById(R.id.navigation_textView);
         textView.setText(projectName);
         fileNameList = new ArrayList(Arrays.asList(dateFilePath.list()));
@@ -382,31 +386,5 @@ public class EditActivity extends AppCompatActivity implements ViewPager.OnPageC
 //            e.printStackTrace();
 //        }
 //    }
-    //別クラスに移行予定
-    private void saveCode(String fileName) {
-
-        try {
-
-            for (int i = 0; i < fragmentArray.size(); i++) {
-                //保存するファイルのフルパス取得
-                File makePath = new File(projectPath + "/" + fileName);
-
-                //ファイルの描きだし関係初期化
-                FileOutputStream fos = new FileOutputStream(makePath);
-                BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(fos, "UTF-8"));
-
-                //Fragment内のeditTextのText取得
-                EditText editText = fragmentArray.get(i).editText;
-                String code = editText.getText().toString();
-
-                //ファイルの書き出し
-                bw.write(code);
-                bw.flush();
-                bw.close();
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
 }
 

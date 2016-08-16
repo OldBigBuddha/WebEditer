@@ -12,6 +12,7 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 
 import com.ubuntu.inschool.oji.webediter.EditActivity;
+import com.ubuntu.inschool.oji.webediter.FileManager;
 import com.ubuntu.inschool.oji.webediter.R;
 
 public class BlankFragment extends Fragment {
@@ -78,5 +79,10 @@ public class BlankFragment extends Fragment {
         editText.setText(code);
 
         return view;
+    }
+
+    public void save(String projectPath, String fileName) {
+        FileManager fileManager = new FileManager(projectPath, fileName, editText.getText().toString());
+        fileManager.savaCode();
     }
 }

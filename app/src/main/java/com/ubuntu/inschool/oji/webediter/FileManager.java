@@ -19,7 +19,7 @@ public class FileManager {
     private String fileName;
     private String code;
 
-    public void FileManager(String projectPath, String fileName , String code) {
+    public FileManager(String projectPath, String fileName , String code) {
 
         path = new File(projectPath + "/" + fileName);
         this.code = code;
@@ -27,11 +27,7 @@ public class FileManager {
 
     }
 
-    public void FileManager(){
-
-    }
-
-    private void savaCode() {
+    public void savaCode() {
 
         try {
             FileOutputStream fileOutputStream = new FileOutputStream(path);
