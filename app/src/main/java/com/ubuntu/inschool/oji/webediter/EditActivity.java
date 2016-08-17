@@ -56,6 +56,11 @@ public class EditActivity extends AppCompatActivity implements ViewPager.OnPageC
     private String fileName;
     public static String fileName_user;
 
+    //拡張子
+    public static final int TYPE_HTML = 0;
+    public static final int TYPE_CSS  = 1;
+    public static final int TYPE_JS   = 2;
+
     //NavigationViewにファイル一覧を表示させるための変数
     //ファイル名一覧
     private ArrayList<String> fileNameList;
@@ -82,8 +87,8 @@ public class EditActivity extends AppCompatActivity implements ViewPager.OnPageC
         makeDialog_newProject();
 
         //初期ファイルの編集画面を作成
-        EditFragment fragmentHTML  = EditFragment.newInstance("index.html","html");
-        EditFragment fragmentCSS   = EditFragment.newInstance("style.css","css");
+        EditFragment fragmentHTML  = EditFragment.newInstance("index.html",TYPE_HTML);
+        EditFragment fragmentCSS   = EditFragment.newInstance("style.css",TYPE_CSS);
 
         //画面追加を記録
         fragmentArray.add(fragmentHTML);
@@ -144,22 +149,18 @@ public class EditActivity extends AppCompatActivity implements ViewPager.OnPageC
 
                             //作成するファイルの種類を選択
                             //種類選別用変数・拡張子が入る
-                            String extension;
                             switch (which) {
                                 //HTMLファイル
                                 case 0:
-                                    extension = "html";
-                                    EditActivity.this.makeDialog_newFile(extension);
+                                    EditActivity.this.makeDialog_newFile(TYPE_HTML);
                                     break;
                                 //CSSファイル
                                 case 1:
-                                    extension = "css";
-                                    EditActivity.this.makeDialog_newFile(extension);
+                                    EditActivity.this.makeDialog_newFile(TYPE_CSS);
                                     break;
                                 //JavaScriptファイル
                                 case 2:
-                                    extension = "js";
-                                    EditActivity.this.makeDialog_newFile(extension);
+                                    EditActivity.this.makeDialog_newFile(TYPE_JS);
                                     break;
                             }
 
@@ -204,7 +205,7 @@ public class EditActivity extends AppCompatActivity implements ViewPager.OnPageC
     //ファイル新規作成にファイル名及び種類を尋ねるダイアログの作成
     //引数:extension
     //ファイルの種類選別用・拡張子が入る
-    private void makeDialog_newFile(final String extension) {
+    private void makeDialog_newFile(final int extension) {
 
         //ダイアログの生成
         AlertDialog.Builder nameDig = new AlertDialog.Builder(EditActivity.this);
@@ -300,22 +301,17 @@ public class EditActivity extends AppCompatActivity implements ViewPager.OnPageC
 
     //ファイル新規作成
     //別クラスに移行予定
-    private void makeFile(String fileName) {
+    private boolean makeFile(String fileName) {
         //作成ファイルのパスの取得
         File newFile = new File(projectPath + "/" + fileName );
         try {
-            //取得したファイル名が存在しているか検証
-            if (!newFile.exists()) {
-                //ファイル新規作成
-                newFile.createNewFile();
-//                saveCode(fileName);
-            }else {
-//                saveCode(fileName);
-            }
+            //ファイル新規作成
+            return newFile.createNewFile();
         }catch (IOException e) {
             Log.d("MakeNewFile", e + "");
         }
 
+        return false;
     }
 
     //NavigationViewのtreeListにdataFilePath下のファイル一覧をセット

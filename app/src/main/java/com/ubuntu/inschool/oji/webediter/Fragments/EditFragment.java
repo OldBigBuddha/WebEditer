@@ -16,19 +16,21 @@ import com.ubuntu.inschool.oji.webediter.R;
 public class EditFragment extends Fragment {
 
     public static String title;
-    public String extension;
+    public int extension;
     public String code;
     public EditText editText;
+    private String titleInHTML;
+
 
     public EditFragment() {
     }
 
 
-    public static EditFragment newInstance(String title, String extension) {
+    public static EditFragment newInstance(String title, final int extension) {
         EditFragment fragment = new EditFragment();
         Bundle args = new Bundle();
         args.putString("title", title);
-        args.putString("extension", extension);
+        args.putInt("extension", extension);
         fragment.setArguments(args);
         return fragment;
     }
@@ -47,23 +49,21 @@ public class EditFragment extends Fragment {
 
         editText = (EditText) view.findViewById(R.id.editText);
         this.title = getArguments().getString("title");
-        this.extension = getArguments().getString("extension");
+        this.extension = getArguments().getInt("extension");
 
         String fileName = EditActivity.fileName_user;
 
         if (fileName == null) {
             title = "index";
         } else {
-            this.title = this.title.split("\\.")[0];
+            titleInHTML = this.title.split("\\.")[0];
         }
 
-        if (this.extension == null) {
-            Log.d("error", "fileExtensionNull");
-        } else switch (this.extension) {
-            case "html":
+        switch (this.extension) {
+            case EditActivity.TYPE_HTML:
                 EditFragment.this.code = "<html>\n" +
                         "\t<head>\n" +
-                        "\t\t<title> " + title + "</title>\n" +
+                        "\t\t<title> " + titleInHTML + "</title>\n" +
                         "\t\t<meta charset=\"utf-8\">\n" +
                         "\t\t<link rel=\"stylesheet\" type=\"text/css\" href=\"./index.css\">\n" +
                         "\t\t<script type=\"text/javascript\" src=\".index.js\"></script>\n" +
@@ -73,12 +73,12 @@ public class EditFragment extends Fragment {
                         "\t</body>\n" +
                         "<html>\n";
                 break;
-            case "css":
+            case EditActivity.TYPE_CSS:
                 EditFragment.this.code = "h1 {\n" +
                         "\tcolor: blue;\n" +
                         "}\n";
                 break;
-            case "js":
+            case EditActivity.TYPE_JS:
                 EditFragment.this.code = "alert(\"HelloWorld\")";
                 break;
         }
