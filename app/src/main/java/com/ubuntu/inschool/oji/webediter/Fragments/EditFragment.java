@@ -1,8 +1,5 @@
 package com.ubuntu.inschool.oji.webediter.Fragments;
 
-import android.content.Context;
-import android.content.SharedPreferences;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -16,19 +13,19 @@ import com.ubuntu.inschool.oji.webediter.EditActivity;
 import com.ubuntu.inschool.oji.webediter.FileManager;
 import com.ubuntu.inschool.oji.webediter.R;
 
-public class BlankFragment extends Fragment {
+public class EditFragment extends Fragment {
 
     public static String title;
-    private String extension;
-    protected  String code;
-    public static EditText editText;
+    public String extension;
+    public String code;
+    public EditText editText;
 
-    public BlankFragment() {
+    public EditFragment() {
     }
 
 
-    public static BlankFragment newInstance(String title, String extension) {
-        BlankFragment fragment = new BlankFragment();
+    public static EditFragment newInstance(String title, String extension) {
+        EditFragment fragment = new EditFragment();
         Bundle args = new Bundle();
         args.putString("title", title);
         args.putString("extension", extension);
@@ -64,7 +61,7 @@ public class BlankFragment extends Fragment {
             Log.d("error", "fileExtensionNull");
         } else switch (this.extension) {
             case "html":
-                BlankFragment.this.code = "<html>\n" +
+                EditFragment.this.code = "<html>\n" +
                         "\t<head>\n" +
                         "\t\t<title> " + title + "</title>\n" +
                         "\t\t<meta charset=\"utf-8\">\n" +
@@ -77,22 +74,23 @@ public class BlankFragment extends Fragment {
                         "<html>\n";
                 break;
             case "css":
-                BlankFragment.this.code = "h1 {\n" +
+                EditFragment.this.code = "h1 {\n" +
                         "\tcolor: blue;\n" +
                         "}\n";
                 break;
             case "js":
-                BlankFragment.this.code = "alert(\"HelloWorld\")";
+                EditFragment.this.code = "alert(\"HelloWorld\")";
                 break;
         }
         editText.setText(this.code);
+        save(this.title);
 
     }
 
 
-    public void save(String projectPath, String fileName) {
+    public void save(String fileName) {
         String context = this.editText.getText().toString();
-        FileManager fileManager = new FileManager(projectPath, fileName, context);
+        FileManager fileManager = new FileManager(EditActivity.projectPath, fileName, context);
         fileManager.savaCode();
     }
 }

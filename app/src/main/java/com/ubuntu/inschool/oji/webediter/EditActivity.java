@@ -3,7 +3,6 @@ package com.ubuntu.inschool.oji.webediter;
 import android.content.DialogInterface;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AlertDialog;
@@ -21,13 +20,10 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.ubuntu.inschool.oji.webediter.Fragments.BlankFragment;
+import com.ubuntu.inschool.oji.webediter.Fragments.EditFragment;
 
-import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -39,7 +35,8 @@ public class EditActivity extends AppCompatActivity implements ViewPager.OnPageC
     //プロジェクト名
     private String projectName;
     //Fragmentを管理するためのArrayList
-    private ArrayList<BlankFragment> fragmentArray = new ArrayList<>();
+    private ArrayList<EditFragment> fragmentArray = new ArrayList<>();
+    private ArrayList<String> fragmentIdArray = new ArrayList<>();
     //フラグメントアダプター
     private FragmentPagerAdapter adapter;
 
@@ -51,7 +48,7 @@ public class EditActivity extends AppCompatActivity implements ViewPager.OnPageC
     //アプリの保存場所(/data/data/com.ubuntu.inschool.oji.webediter/files)パス
     private String filePath;
     //ファイルの保存場所(filePath + / + プロジェクト名)パス
-    private String projectPath;
+    public static String projectPath;
     //projectPathのFile型
     private File dateFilePath;
 
@@ -85,8 +82,8 @@ public class EditActivity extends AppCompatActivity implements ViewPager.OnPageC
         makeDialog_newProject();
 
         //初期ファイルの編集画面を作成
-        BlankFragment fragmentHTML  = BlankFragment.newInstance("index.html","html");
-        BlankFragment fragmentCSS   = BlankFragment.newInstance("style.css","css");
+        EditFragment fragmentHTML  = EditFragment.newInstance("index.html","html");
+        EditFragment fragmentCSS   = EditFragment.newInstance("style.css","css");
 
         //画面追加を記録
         fragmentArray.add(fragmentHTML);
@@ -110,7 +107,7 @@ public class EditActivity extends AppCompatActivity implements ViewPager.OnPageC
             @Override
             public int getCount() {
                 int size = fragmentArray.size();
-                Toast.makeText(EditActivity.this, size + "", Toast.LENGTH_LONG).show();
+//                Toast.makeText(EditActivity.this, size + "", Toast.LENGTH_LONG).show();
                 return fragmentArray.size();
             }
         };
@@ -177,12 +174,9 @@ public class EditActivity extends AppCompatActivity implements ViewPager.OnPageC
                 if (id == R.id.save_tab) {
 
                     for (int i = 0; i < fragmentArray.size(); i++) {
-//                        saveCode(fragmentArray.get(i).title);
 
                     }
-
                 }
-
                 return true;
             }
         });
@@ -236,9 +230,8 @@ public class EditActivity extends AppCompatActivity implements ViewPager.OnPageC
                 fileName = fileName_user + "." + extension;
 
                 //Fragmentの生成
-                BlankFragment fragment = BlankFragment.newInstance(fileName, extension);
+                EditFragment fragment = EditFragment.newInstance(fileName, extension);
                 fragmentArray.add(fragment);
-                fragment.save(projectPath, fileName);
 
                 //Tabの生成
                 tabLayout.addTab(tabLayout.newTab().setText(fileName));
