@@ -202,67 +202,6 @@ public class EditActivity extends AppCompatActivity implements ViewPager.OnPageC
     }
     /*  ↑ViewPager.OnPageChangeListenerをimplementsしたため必要なメソッド群↑   */
 
-    //ファイル新規作成にファイル名及び種類を尋ねるダイアログの作成
-    //引数:extension
-    //ファイルの種類選別用・拡張子が入る
-    private void makeDialog_newFile(final int extension) {
-
-        //ダイアログの生成
-        AlertDialog.Builder nameDig = new AlertDialog.Builder(EditActivity.this);
-        //ダイアログ上でのファイル名入力欄
-        final EditText editText_FileName = new EditText(EditActivity.this);
-        editText_FileName.setSingleLine(true);
-        nameDig.setTitle("ファイル名を入力してください（拡張子不要）");
-        nameDig.setView(editText_FileName);
-        //MakeFileが押された際の動作
-        nameDig.setPositiveButton("MakeFile", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-
-                //ファイル名の取得
-                fileName_user = editText_FileName.getText().toString();
-
-                //取得したユーザ希望のファイル名に拡張子が入っていた場合除去
-                //なおこの操作によりファイル名に"."を入れるとそれ以降は全てカットされる
-                fileName_user = fileName_user.split("\\.")[0];
-                Toast.makeText(EditActivity.this, fileName_user,Toast.LENGTH_LONG).show();
-
-                //カット済みの取得名に拡張をつけ、ファイル名に
-                fileName = fileName_user + "." + extension;
-
-                //Fragmentの生成
-                EditFragment fragment = EditFragment.newInstance(fileName, extension);
-                fragmentArray.add(fragment);
-
-                //Tabの生成
-                tabLayout.addTab(tabLayout.newTab().setText(fileName));
-                viewPager.setAdapter(adapter);
-
-                //新規ファイルの作成
-                makeFile(fileName);
-
-                //新しく生成したタブを選択にする
-                int selectTabPosition = fragmentArray.size() - 1;
-                TabLayout.Tab tab = tabLayout.getTabAt(selectTabPosition);
-                tab.select();
-
-                //新規ファイルをNavigationViewのファイルツリーに反映
-                setFileTreeOnNavigatinView();
-            }
-        });
-
-        //キャンセルを押された時の動作
-        nameDig.setNegativeButton("キャンセル", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-
-            }
-        });
-
-        nameDig.create().show();
-
-    }
-
     //新規プロジェクト名を尋ねるダイアログの生成
     private void makeDialog_newProject() {
 
@@ -285,8 +224,8 @@ public class EditActivity extends AppCompatActivity implements ViewPager.OnPageC
 
                         if (!dateFilePath.exists()) {
                             dateFilePath.mkdir();
-                            makeFile("index.html");
-                            makeFile("style.css");
+                            makeFile("index", TYPE_HTML);
+                            makeFile("style", TYPE_CSS);
                         }else {
 
                         }
@@ -299,12 +238,101 @@ public class EditActivity extends AppCompatActivity implements ViewPager.OnPageC
         alertDialog.show();
     }
 
+    //ファイル新規作成にファイル名及び種類を尋ねるダイアログの作成
+    //引数:extension
+    //ファイルの種類選別用・拡張子が入る
+    private void makeDialog_newFile(final int extension) {
+
+        //ダイアログの生成
+        AlertDialog.Builder nameDig = new AlertDialog.Builder(EditActivity.this);
+        //ダイアログ上でのファイル名入力欄
+        final EditText editText_FileName = new EditText(EditActivity.this);
+        editText_FileName.setSingleLine(true);
+        nameDig.setTitle("ファイル名を入力してください（拡張子不要）");
+        nameDig.setView(editText_FileName);
+        //MakeFileが押された際の動作
+        nameDig.setPositiveButton("MakeFile", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+                //ファイル名の取得
+                fileName_user = editText_FileName.getText().toString();
+
+                //取得したユーザ希望のファイル名に拡張子が入っていた場合除去
+                //なおこの操作によりファイル名に"."を入れるとそれ以降は全てカットされる
+                fileName = fileName_user.split("\\.")[0];
+                Toast.makeText(EditActivity.this, fileName_user,Toast.LENGTH_LONG).show();
+
+                switch (extension) {
+                    case TYPE_HTML:
+                        makeFile(fileName, TYPE_HTML);
+                        break;
+
+                    case TYPE_CSS:
+                        makeFile(fileName, TYPE_CSS);
+                        break;
+
+                    case TYPE_JS:
+                        makeFile(fileName, TYPE_JS);
+                }
+
+            }
+        });
+
+        //キャンセルを押された時の動作
+        nameDig.setNegativeButton("キャンセル", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+            }
+        });
+
+        nameDig.create().show();
+
+    }
+
     //ファイル新規作成
     //別クラスに移行予定
-    private boolean makeFile(String fileName) {
+    private boolean makeFile(String fileName, final int extension) {
         //作成ファイルのパスの取得
-        File newFile = new File(projectPath + "/" + fileName );
+        File newFile;
+        String filePath = projectPath + "/" + fileName;
+        String type;
+
         try {
+            switch (extension) {
+                case TYPE_HTML:
+                    type = ".html";
+                    newFile = new File(filePath + type);
+                    break;
+
+                case TYPE_CSS:
+                    type = ".css";
+                    newFile = new File(filePath + type);
+                    break;
+
+                case TYPE_JS:
+                    type = ".js";
+                    newFile = new File(filePath + type);
+                    break;
+            }
+
+            //Fragmentの生成
+            EditFragment fragment = EditFragment.newInstance(fileName, extension);
+            fragmentArray.add(fragment);
+
+            //Tabの生成
+            tabLayout.addTab(tabLayout.newTab().setText(fileName));
+            viewPager.setAdapter(adapter);
+
+            //新しく生成したタブを選択にする
+            int selectTabPosition = fragmentArray.size() - 1;
+            TabLayout.Tab tab = tabLayout.getTabAt(selectTabPosition);
+            tab.select();
+
+            //新規ファイルをNavigationViewのファイルツリーに反映
+            setFileTreeOnNavigatinView();
+
             //ファイル新規作成
             return newFile.createNewFile();
         }catch (IOException e) {
