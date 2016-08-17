@@ -109,6 +109,8 @@ public class EditActivity extends AppCompatActivity implements ViewPager.OnPageC
 
             @Override
             public int getCount() {
+                int size = fragmentArray.size();
+                Toast.makeText(EditActivity.this, size + "", Toast.LENGTH_LONG).show();
                 return fragmentArray.size();
             }
         };

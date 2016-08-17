@@ -6,8 +6,8 @@ android {
 
     defaultConfig {
         applicationId "com.ubuntu.inschool.oji.webediter"
-        minSdkVersion 22
-        targetSdkVersion 23
+        minSdkVersion 20
+        targetSdkVersion 22
         versionCode 1
         versionName "1.0"
     }

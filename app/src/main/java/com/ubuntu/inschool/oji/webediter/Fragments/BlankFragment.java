@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -18,6 +19,7 @@ import com.ubuntu.inschool.oji.webediter.R;
 public class BlankFragment extends Fragment {
 
     public static String title;
+    private String extension;
     protected  String code;
     public static EditText editText;
 
@@ -37,23 +39,30 @@ public class BlankFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_blank, container, false);
-        String extension;
-        this.title = getArguments().getString("title");
-        extension = getArguments().getString("extension");
+        final View VIEW = inflater.inflate(R.layout.fragment_blank, container, false);
+        return VIEW;
+    }
+
+
+    @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
         editText = (EditText) view.findViewById(R.id.editText);
+        this.title = getArguments().getString("title");
+        this.extension = getArguments().getString("extension");
 
         String fileName = EditActivity.fileName_user;
 
         if (fileName == null) {
             title = "index";
         } else {
-            title = title.split("\\.")[0];
+            this.title = this.title.split("\\.")[0];
         }
 
-        if (extension == null) {
+        if (this.extension == null) {
             Log.d("error", "fileExtensionNull");
-        } else switch (extension) {
+        } else switch (this.extension) {
             case "html":
                 BlankFragment.this.code = "<html>\n" +
                         "\t<head>\n" +
@@ -76,13 +85,14 @@ public class BlankFragment extends Fragment {
                 BlankFragment.this.code = "alert(\"HelloWorld\")";
                 break;
         }
-        editText.setText(code);
+        editText.setText(this.code);
 
-        return view;
     }
 
+
     public void save(String projectPath, String fileName) {
-        FileManager fileManager = new FileManager(projectPath, fileName, editText.getText().toString());
+        String context = this.editText.getText().toString();
+        FileManager fileManager = new FileManager(projectPath, fileName, context);
         fileManager.savaCode();
     }
 }
