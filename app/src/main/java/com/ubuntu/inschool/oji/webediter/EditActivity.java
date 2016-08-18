@@ -331,6 +331,7 @@ public class EditActivity extends AppCompatActivity implements ViewPager.OnPageC
             fragmentArray.add(fragment);
 
             //Tabの生成
+            adapter.notifyDataSetChanged();
             tabLayout.addTab(tabLayout.newTab().setText(fileName));
             viewPager.setAdapter(adapter);
 
