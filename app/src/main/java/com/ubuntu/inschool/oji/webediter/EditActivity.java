@@ -83,18 +83,15 @@ public class EditActivity extends AppCompatActivity implements ViewPager.OnPageC
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        //プロジェクト名取得用ダイアログを生成
-        makeDialog_newProject();
-
-        //初期ファイルの編集画面を作成
-        EditFragment fragmentHTML  = EditFragment.newInstance("index.html",TYPE_HTML);
-        EditFragment fragmentCSS   = EditFragment.newInstance("style.css",TYPE_CSS);
-
-        //画面追加を記録
-        fragmentArray.add(fragmentHTML);
-//        fragmentHTML.save(projectPath,"index.html");
-        fragmentArray.add(fragmentCSS);
-//        fragmentCSS.save(projectPath,"style.css");
+//        //初期ファイルの編集画面を作成
+//        EditFragment fragmentHTML  = EditFragment.newInstance("index.html",TYPE_HTML);
+//        EditFragment fragmentCSS   = EditFragment.newInstance("style.css",TYPE_CSS);
+//
+//        //画面追加を記録
+//        fragmentArray.add(fragmentHTML);
+////        fragmentHTML.save(projectPath,"index.html");
+//        fragmentArray.add(fragmentCSS);
+////        fragmentCSS.save(projectPath,"style.css");
 
         //FragmentAdapterの初期化
         adapter = new FragmentPagerAdapter(getSupportFragmentManager()) {
@@ -116,6 +113,10 @@ public class EditActivity extends AppCompatActivity implements ViewPager.OnPageC
                 return fragmentArray.size();
             }
         };
+
+
+        //プロジェクト名取得用ダイアログを生成
+        makeDialog_newProject();
 
         //viewPagerにadapterをセット
         viewPager.setAdapter(adapter);
@@ -274,7 +275,9 @@ public class EditActivity extends AppCompatActivity implements ViewPager.OnPageC
 
                     case TYPE_JS:
                         makeFile(fileName, TYPE_JS);
+                        break;
                 }
+                setFileTreeOnNavigatinView();
 
             }
         });
@@ -294,27 +297,33 @@ public class EditActivity extends AppCompatActivity implements ViewPager.OnPageC
     //ファイル新規作成
     //別クラスに移行予定
     private boolean makeFile(String fileName, final int extension) {
-        //作成ファイルのパスの取得
-        File newFile;
-        String filePath = projectPath + "/" + fileName;
-        String type;
 
         try {
+
+            //作成ファイルのパスの取得
+            File newFile = null;
+            String filePath = projectPath + "/" + fileName;
+            String type;
+
+
             switch (extension) {
-                case TYPE_HTML:
+                case TYPE_HTML: {
                     type = ".html";
                     newFile = new File(filePath + type);
                     break;
+                }
 
-                case TYPE_CSS:
+                case TYPE_CSS: {
                     type = ".css";
                     newFile = new File(filePath + type);
                     break;
+                }
 
-                case TYPE_JS:
+                case TYPE_JS: {
                     type = ".js";
                     newFile = new File(filePath + type);
                     break;
+                }
             }
 
             //Fragmentの生成
@@ -331,10 +340,11 @@ public class EditActivity extends AppCompatActivity implements ViewPager.OnPageC
             tab.select();
 
             //新規ファイルをNavigationViewのファイルツリーに反映
-            setFileTreeOnNavigatinView();
+//            setFileTreeOnNavigatinView();
 
             //ファイル新規作成
             return newFile.createNewFile();
+
         }catch (IOException e) {
             Log.d("MakeNewFile", e + "");
         }

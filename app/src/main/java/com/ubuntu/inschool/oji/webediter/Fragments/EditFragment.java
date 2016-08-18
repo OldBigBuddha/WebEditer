@@ -93,4 +93,10 @@ public class EditFragment extends Fragment {
         FileManager fileManager = new FileManager(EditActivity.projectPath, fileName, context);
         fileManager.savaCode();
     }
+//
+//    @Override
+//    public String toString() {
+//        this.code = editText.getText().toString();
+//        return this.code;
+//    }
 }
