@@ -220,7 +220,6 @@ public class EditActivity extends AppCompatActivity implements ViewPager.OnPageC
                         }else {
 
                         }
-//                        setFileTreeOnNavigatinView();
                     }
                 });
 
@@ -267,7 +266,6 @@ public class EditActivity extends AppCompatActivity implements ViewPager.OnPageC
                         makeFile(fileName, TYPE_JS);
                         break;
                 }
-//                setFileTreeOnNavigatinView();
 
             }
         });
@@ -299,24 +297,18 @@ public class EditActivity extends AppCompatActivity implements ViewPager.OnPageC
                 case TYPE_HTML: {
                     type = ".html";
                     fileName = fileName + type;
-//                    filePath = projectPath + "/" + fileName;
-//                    newFile = new File(filePath);
                     break;
                 }
 
                 case TYPE_CSS: {
                     type = ".css";
                     fileName = fileName + type;
-//                    filePath = projectPath + "/" + fileName;
-//                    newFile = new File(filePath);
                     break;
                 }
 
                 case TYPE_JS: {
                     type = ".js";
                     fileName = fileName + type;
-//                    filePath = projectPath + "/" + fileName;
-//                    newFile = new File(filePath);
                     break;
                 }
             }
@@ -324,11 +316,10 @@ public class EditActivity extends AppCompatActivity implements ViewPager.OnPageC
             //Fragmentの生成
             EditFragment fragment = EditFragment.newInstance(projectPath,fileName, extension);
             fragmentArray.add(fragment);
-//            fragment.save();
 
             //Tabの生成
             adapter.notifyDataSetChanged();
-            tabLayout.addTab(tabLayout.newTab().setText(fileName));
+//            tabLayout.addTab(tabLayout.newTab().setText(fileName));
             viewPager.setAdapter(adapter);
 
             //新しく生成したタブを選択にする

@@ -54,23 +54,23 @@ public class EditFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         editText = (EditText) view.findViewById(R.id.editText);
-        this.projectPath = getArguments().getString("projectPath");
-        this.title = getArguments().getString("title");
-        this.extension = getArguments().getInt("extension");
+        projectPath = getArguments().getString("projectPath");
+        title = getArguments().getString("title");
+        extension = getArguments().getInt("extension");
 
-        this.filePath = this.projectPath + "/" + this.title;
+        filePath = projectPath + "/" + title;
 
 //        String fileName = EditActivity.fileName_user;
 
         if (this.title == null) {
             this.title = "index";
         } else {
-            titleInHTML = this.title.split("\\.")[0];
+            titleInHTML = title.split("\\.")[0];
         }
 
         switch (this.extension) {
             case EditActivity.TYPE_HTML:
-                EditFragment.this.code = "<html>\n" +
+                code = "<html>\n" +
                         "\t<head>\n" +
                         "\t\t<title> " + titleInHTML + "</title>\n" +
                         "\t\t<meta charset=\"utf-8\">\n" +
@@ -83,28 +83,30 @@ public class EditFragment extends Fragment {
                         "<html>\n";
                 break;
             case EditActivity.TYPE_CSS:
-                EditFragment.this.code = "h1 {\n" +
+                code = "h1 {\n" +
                         "\tcolor: blue;\n" +
                         "}\n";
                 break;
             case EditActivity.TYPE_JS:
-                EditFragment.this.code = "alert(\"HelloWorld\")";
+                code = "alert(\"HelloWorld\")";
                 break;
         }
-        editText.setText(this.code);
+        editText.setText(code);
         save();
 
     }
 
 
     public void save() {
-        String context = this.editText.getText().toString();
-//        File writePath = new File(this.filePath);
-        FileManager fileManager = new FileManager(EditActivity.projectPath, this.title, context);
-//        if (!writePath.exists()) {
+        String fileCode = editText.getText().toString();
+        File writePath = new File(filePath);
+        FileManager fileManager = new FileManager(projectPath, title);
+        if (!writePath.exists()) {
             fileManager.createFile();
-//        }
+        }
+        fileManager.setFileCode(fileCode);
         fileManager.savaCode();
+//        fileManager.savaCode(context);
     }
 //
 //    @Override
