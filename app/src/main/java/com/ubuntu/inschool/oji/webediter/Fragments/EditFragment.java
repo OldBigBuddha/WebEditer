@@ -18,7 +18,7 @@ import java.io.File;
 public class EditFragment extends Fragment {
 
     public static String title;
-    private String fileName;
+//    private String fileName;
     public int extension;
     public String code;
     public EditText editText;
@@ -92,18 +92,18 @@ public class EditFragment extends Fragment {
                 break;
         }
         editText.setText(this.code);
-        save(this.filePath);
+        save();
 
     }
 
 
-    public void save(String fileName) {
+    public void save() {
         String context = this.editText.getText().toString();
-        File writePath = new File(this.filePath);
-        FileManager fileManager = new FileManager(EditActivity.projectPath, fileName, context);
-        if (writePath.exists()) {
+//        File writePath = new File(this.filePath);
+        FileManager fileManager = new FileManager(EditActivity.projectPath, this.title, context);
+//        if (!writePath.exists()) {
             fileManager.createFile();
-        }
+//        }
         fileManager.savaCode();
     }
 //

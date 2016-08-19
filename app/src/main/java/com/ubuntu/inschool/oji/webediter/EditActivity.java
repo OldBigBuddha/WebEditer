@@ -83,16 +83,6 @@ public class EditActivity extends AppCompatActivity implements ViewPager.OnPageC
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-//        //初期ファイルの編集画面を作成
-//        EditFragment fragmentHTML  = EditFragment.newInstance("index.html",TYPE_HTML);
-//        EditFragment fragmentCSS   = EditFragment.newInstance("style.css",TYPE_CSS);
-//
-//        //画面追加を記録
-//        fragmentArray.add(fragmentHTML);
-////        fragmentHTML.save(projectPath,"index.html");
-//        fragmentArray.add(fragmentCSS);
-////        fragmentCSS.save(projectPath,"style.css");
-
         //FragmentAdapterの初期化
         adapter = new FragmentPagerAdapter(getSupportFragmentManager()) {
             @Override
@@ -108,8 +98,6 @@ public class EditActivity extends AppCompatActivity implements ViewPager.OnPageC
 
             @Override
             public int getCount() {
-                int size = fragmentArray.size();
-//                Toast.makeText(EditActivity.this, size + "", Toast.LENGTH_LONG).show();
                 return fragmentArray.size();
             }
         };
@@ -124,6 +112,8 @@ public class EditActivity extends AppCompatActivity implements ViewPager.OnPageC
 
         //FragmentをTabLayoutで表示
         tabLayout.setupWithViewPager(viewPager);
+
+//        setFileTreeOnNavigatinView();
     }
 
     //Toolbarのメニュー定義
@@ -230,7 +220,7 @@ public class EditActivity extends AppCompatActivity implements ViewPager.OnPageC
                         }else {
 
                         }
-                        setFileTreeOnNavigatinView();
+//                        setFileTreeOnNavigatinView();
                     }
                 });
 
@@ -261,8 +251,8 @@ public class EditActivity extends AppCompatActivity implements ViewPager.OnPageC
 
                 //取得したユーザ希望のファイル名に拡張子が入っていた場合除去
                 //なおこの操作によりファイル名に"."を入れるとそれ以降は全てカットされる
-//                fileName = fileName_user.split("\\.")[0];
-                Toast.makeText(EditActivity.this, fileName_user,Toast.LENGTH_LONG).show();
+                fileName = fileName_user.split("\\.")[0];
+                Toast.makeText(EditActivity.this, fileName,Toast.LENGTH_LONG).show();
 
                 switch (extension) {
                     case TYPE_HTML:
@@ -277,7 +267,7 @@ public class EditActivity extends AppCompatActivity implements ViewPager.OnPageC
                         makeFile(fileName, TYPE_JS);
                         break;
                 }
-                setFileTreeOnNavigatinView();
+//                setFileTreeOnNavigatinView();
 
             }
         });
@@ -334,6 +324,7 @@ public class EditActivity extends AppCompatActivity implements ViewPager.OnPageC
             //Fragmentの生成
             EditFragment fragment = EditFragment.newInstance(projectPath,fileName, extension);
             fragmentArray.add(fragment);
+//            fragment.save();
 
             //Tabの生成
             adapter.notifyDataSetChanged();
@@ -346,12 +337,13 @@ public class EditActivity extends AppCompatActivity implements ViewPager.OnPageC
             tab.select();
 
             //新規ファイルをNavigationViewのファイルツリーに反映
-//            setFileTreeOnNavigatinView();
+            setFileTreeOnNavigatinView();
 
             //ファイル新規作成
 //            return newFile.createNewFile();
 
 //        return false;
+        return true;
     }
 
     //NavigationViewのtreeListにdataFilePath下のファイル一覧をセット
