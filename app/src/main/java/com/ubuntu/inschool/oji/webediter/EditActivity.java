@@ -261,7 +261,7 @@ public class EditActivity extends AppCompatActivity implements ViewPager.OnPageC
 
                 //取得したユーザ希望のファイル名に拡張子が入っていた場合除去
                 //なおこの操作によりファイル名に"."を入れるとそれ以降は全てカットされる
-                fileName = fileName_user.split("\\.")[0];
+//                fileName = fileName_user.split("\\.")[0];
                 Toast.makeText(EditActivity.this, fileName_user,Toast.LENGTH_LONG).show();
 
                 switch (extension) {
@@ -298,36 +298,41 @@ public class EditActivity extends AppCompatActivity implements ViewPager.OnPageC
     //別クラスに移行予定
     private boolean makeFile(String fileName, final int extension) {
 
-        try {
-
             //作成ファイルのパスの取得
-            File newFile = null;
-            String filePath = projectPath + "/" + fileName;
-            String type;
+//            File newFile = null;
+//            String filePath = projectPath + "/" + fileName;
+//            String filePath = null;
+            String type = null;
 
 
             switch (extension) {
                 case TYPE_HTML: {
                     type = ".html";
-                    newFile = new File(filePath + type);
+                    fileName = fileName + type;
+//                    filePath = projectPath + "/" + fileName;
+//                    newFile = new File(filePath);
                     break;
                 }
 
                 case TYPE_CSS: {
                     type = ".css";
-                    newFile = new File(filePath + type);
+                    fileName = fileName + type;
+//                    filePath = projectPath + "/" + fileName;
+//                    newFile = new File(filePath);
                     break;
                 }
 
                 case TYPE_JS: {
                     type = ".js";
-                    newFile = new File(filePath + type);
+                    fileName = fileName + type;
+//                    filePath = projectPath + "/" + fileName;
+//                    newFile = new File(filePath);
                     break;
                 }
             }
 
             //Fragmentの生成
-            EditFragment fragment = EditFragment.newInstance(fileName, extension);
+            EditFragment fragment = EditFragment.newInstance(projectPath,fileName, extension);
             fragmentArray.add(fragment);
 
             //Tabの生成
@@ -344,13 +349,9 @@ public class EditActivity extends AppCompatActivity implements ViewPager.OnPageC
 //            setFileTreeOnNavigatinView();
 
             //ファイル新規作成
-            return newFile.createNewFile();
+//            return newFile.createNewFile();
 
-        }catch (IOException e) {
-            Log.d("MakeNewFile", e + "");
-        }
-
-        return false;
+//        return false;
     }
 
     //NavigationViewのtreeListにdataFilePath下のファイル一覧をセット

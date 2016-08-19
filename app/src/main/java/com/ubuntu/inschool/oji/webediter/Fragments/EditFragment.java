@@ -13,23 +13,29 @@ import com.ubuntu.inschool.oji.webediter.EditActivity;
 import com.ubuntu.inschool.oji.webediter.FileManager;
 import com.ubuntu.inschool.oji.webediter.R;
 
+import java.io.File;
+
 public class EditFragment extends Fragment {
 
     public static String title;
+    private String fileName;
     public int extension;
     public String code;
     public EditText editText;
     private String titleInHTML;
+    private String projectPath;
+    private String filePath;
 
 
     public EditFragment() {
     }
 
 
-    public static EditFragment newInstance(String title, final int extension) {
+    public static EditFragment newInstance(String projectPath, String title, final int extension) {
         EditFragment fragment = new EditFragment();
         Bundle args = new Bundle();
         args.putString("title", title);
+        args.putString("projectPath", projectPath);
         args.putInt("extension", extension);
         fragment.setArguments(args);
         return fragment;
@@ -48,13 +54,16 @@ public class EditFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         editText = (EditText) view.findViewById(R.id.editText);
+        this.projectPath = getArguments().getString("projectPath");
         this.title = getArguments().getString("title");
         this.extension = getArguments().getInt("extension");
 
-        String fileName = EditActivity.fileName_user;
+        this.filePath = this.projectPath + "/" + this.title;
 
-        if (fileName == null) {
-            title = "index";
+//        String fileName = EditActivity.fileName_user;
+
+        if (this.title == null) {
+            this.title = "index";
         } else {
             titleInHTML = this.title.split("\\.")[0];
         }
@@ -83,14 +92,18 @@ public class EditFragment extends Fragment {
                 break;
         }
         editText.setText(this.code);
-        save(this.title);
+        save(this.filePath);
 
     }
 
 
     public void save(String fileName) {
         String context = this.editText.getText().toString();
+        File writePath = new File(this.filePath);
         FileManager fileManager = new FileManager(EditActivity.projectPath, fileName, context);
+        if (writePath.exists()) {
+            fileManager.createFile();
+        }
         fileManager.savaCode();
     }
 //

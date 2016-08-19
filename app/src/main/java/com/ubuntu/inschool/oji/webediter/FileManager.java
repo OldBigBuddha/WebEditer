@@ -1,6 +1,8 @@
 package com.ubuntu.inschool.oji.webediter;
 
+import android.util.Log;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedWriter;
@@ -16,31 +18,42 @@ import java.io.OutputStreamWriter;
 public class FileManager {
 
     private File path;
-    private String fileName;
+    protected String fileName;
     private String code;
 
     public FileManager(String projectPath, String fileName , String code) {
 
-        path = new File(projectPath + "/" + fileName);
+        this.path = new File(projectPath + "/" + fileName);
         this.code = code;
         this.fileName = fileName;
 
+
+    }
+
+    public boolean createFile() {
+        try {
+            return this.path.createNewFile();
+        }catch (IOException e) {
+            e.printStackTrace();
+        }
+        return false;
     }
 
     public void savaCode() {
 
-        try {
-            FileOutputStream fileOutputStream = new FileOutputStream(path);
-            BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter(fileOutputStream,"UTF-8"));
+        if (this.path.exists()) {
+            try {
+                FileOutputStream fileOutputStream = new FileOutputStream(this.path);
+                BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter(fileOutputStream, "UTF-8"));
 
-            bufferedWriter.write(code);
-            bufferedWriter.flush();
-            bufferedWriter.close();
+                bufferedWriter.write(code);
+                bufferedWriter.flush();
+                bufferedWriter.close();
 
-        } catch (IOException e) {
-            e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
-
-
+        Log.d("[error_saveCode]", "Couldn't found file");
     }
 }
