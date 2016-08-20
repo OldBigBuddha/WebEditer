@@ -37,7 +37,6 @@ public class EditActivity extends AppCompatActivity implements ViewPager.OnPageC
     //Fragmentを管理するためのArrayList
     private ArrayList<EditFragment> fragmentArray = new ArrayList<>();
     private ArrayList<String> fragmentIdArray = new ArrayList<>();
-    //フラグメントアダプター
     private FragmentPagerAdapter adapter;
 
 
@@ -113,7 +112,6 @@ public class EditActivity extends AppCompatActivity implements ViewPager.OnPageC
         //FragmentをTabLayoutで表示
         tabLayout.setupWithViewPager(viewPager);
 
-//        setFileTreeOnNavigatinView();
     }
 
     //Toolbarのメニュー定義
@@ -164,10 +162,11 @@ public class EditActivity extends AppCompatActivity implements ViewPager.OnPageC
                 } else
                 //保存
                 if (id == R.id.save_tab) {
-
-                    for (int i = 0; i < fragmentArray.size(); i++) {
-
-                    }
+                    return false;
+                } else
+                if (id == R.id.test_home) {
+                    finish();
+                    return true;
                 }
                 return true;
             }
@@ -286,11 +285,7 @@ public class EditActivity extends AppCompatActivity implements ViewPager.OnPageC
     //別クラスに移行予定
     private boolean makeFile(String fileName, final int extension) {
 
-            //作成ファイルのパスの取得
-//            File newFile = null;
-//            String filePath = projectPath + "/" + fileName;
-//            String filePath = null;
-            String type = null;
+        String type = null;
 
 
             switch (extension) {
@@ -319,7 +314,6 @@ public class EditActivity extends AppCompatActivity implements ViewPager.OnPageC
 
             //Tabの生成
             adapter.notifyDataSetChanged();
-//            tabLayout.addTab(tabLayout.newTab().setText(fileName));
             viewPager.setAdapter(adapter);
 
             //新しく生成したタブを選択にする
@@ -330,10 +324,6 @@ public class EditActivity extends AppCompatActivity implements ViewPager.OnPageC
             //新規ファイルをNavigationViewのファイルツリーに反映
             setFileTreeOnNavigatinView();
 
-            //ファイル新規作成
-//            return newFile.createNewFile();
-
-//        return false;
         return true;
     }
 
@@ -351,17 +341,21 @@ public class EditActivity extends AppCompatActivity implements ViewPager.OnPageC
                 //Adapterの取得
                 arrayAdapter = (ArrayAdapter<String>)listView.getAdapter();
 
+                EditFragment fragment = fragmentArray.get(position);
+                String frgmentStr = fragment.toString();
+                Toast.makeText(getApplicationContext(), frgmentStr, Toast.LENGTH_SHORT).show();
+
                 //削除するファイル名及びフルパス取得
                 String positingFileName = fileNameList.get(position);
-                File deleteFile = new File(dateFilePath.toString() + "/" + positingFileName);
-                //ファイル削除
-                deleteFile.delete();
+                FileManager fileManager = new FileManager(projectPath, positingFileName);
+                fileManager.deleteFile();
+
+                Toast.makeText(getApplicationContext(), position + "\n" + fragmentArray.get(position).toString(), Toast.LENGTH_SHORT).show();
+
 
                 //削除したファイルに関連するFragment及びTabの削除及び更新
-                fragmentArray.remove(position);
-                adapter.notifyDataSetChanged();
-                fileNameList.remove(position);
-                arrayAdapter.notifyDataSetChanged();
+//                adapter.destroyItem(fragment.container, position, adapter.instantiateItem(fragment.container, position));
+                removeTab(position);
 
                 return false;
             }
@@ -373,32 +367,12 @@ public class EditActivity extends AppCompatActivity implements ViewPager.OnPageC
 
     }
 
-    //中身の保存
-    //TODO 別クラスに移行予定
-//    private void saveCode(String fileName) {
-//
-//        try {
-//
-//            for (int i = 0; i < fragmentArray.size(); i++) {
-//                //保存するファイルのフルパス取得
-//                File makePath = new File(projectPath + "/" + fileName);
-//
-//                //ファイルの描きだし関係初期化
-//                FileOutputStream fos = new FileOutputStream(makePath);
-//                BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(fos, "UTF-8"));
-//
-//                //Fragment内のeditTextのText取得
-//                EditText editText = fragmentArray.get(i).editText;
-//                String code = editText.getText().toString();
-//
-//                //ファイルの書き出し
-//                bw.write(code);
-//                bw.flush();
-//                bw.close();
-//            }
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-//    }
+    private void removeTab(final int position) {
+        fragmentArray.remove(position);
+        adapter.notifyDataSetChanged();
+        fileNameList.remove(position);
+        arrayAdapter.notifyDataSetChanged();
+    }
+
 }
 

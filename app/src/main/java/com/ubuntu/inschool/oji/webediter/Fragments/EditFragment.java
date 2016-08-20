@@ -18,7 +18,7 @@ import java.io.File;
 public class EditFragment extends Fragment {
 
     public static String title;
-//    private String fileName;
+    public ViewGroup container;
     public int extension;
     public String code;
     public EditText editText;
@@ -45,6 +45,7 @@ public class EditFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         final View VIEW = inflater.inflate(R.layout.fragment_blank, container, false);
+        this.container = container;
         return VIEW;
     }
 
@@ -59,8 +60,6 @@ public class EditFragment extends Fragment {
         extension = getArguments().getInt("extension");
 
         filePath = projectPath + "/" + title;
-
-//        String fileName = EditActivity.fileName_user;
 
         if (this.title == null) {
             this.title = "index";
@@ -90,6 +89,8 @@ public class EditFragment extends Fragment {
             case EditActivity.TYPE_JS:
                 code = "alert(\"HelloWorld\")";
                 break;
+            default:
+                code = "";
         }
         editText.setText(code);
         save();
@@ -101,17 +102,12 @@ public class EditFragment extends Fragment {
         String fileCode = editText.getText().toString();
         File writePath = new File(filePath);
         FileManager fileManager = new FileManager(projectPath, title);
+
         if (!writePath.exists()) {
             fileManager.createFile();
         }
         fileManager.setFileCode(fileCode);
         fileManager.savaCode();
-//        fileManager.savaCode(context);
     }
-//
-//    @Override
-//    public String toString() {
-//        this.code = editText.getText().toString();
-//        return this.code;
-//    }
+
 }

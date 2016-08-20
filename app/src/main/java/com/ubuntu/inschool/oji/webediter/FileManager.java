@@ -22,15 +22,9 @@ public class FileManager {
 
     private File path;
     private String fileCode;
-    protected String fileName;
-    private String projectPath;
-    private String code;
 
     public FileManager(String projectPath, String fileName) {
-//        this.projectPath = projectPath;
-//        this.fileName = fileName;
         this.path = new File(projectPath + "/" + fileName);
-
     }
 
     public String read() {
@@ -74,8 +68,8 @@ public class FileManager {
     }
 
     public boolean deleteFile() {
-        if (this.path.exists()) {
-            return this.path.delete();
+        if (path.exists() && path.isFile()) {
+            return path.delete();
         }
         return  false;
     }
