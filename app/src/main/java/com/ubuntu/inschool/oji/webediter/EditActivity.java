@@ -35,9 +35,9 @@ public class EditActivity extends AppCompatActivity implements ViewPager.OnPageC
     //プロジェクト名
     private String projectName;
     //Fragmentを管理するためのArrayList
-    private ArrayList<EditFragment> fragmentArray = new ArrayList<>();
+    public static ArrayList<EditFragment> fragmentArray = new ArrayList<>();
     private ArrayList<String> fragmentIdArray = new ArrayList<>();
-    private FragmentPagerAdapter adapter;
+    private EditorFragmentAdapter adapter;
 
 
     //Tab関連
@@ -83,23 +83,7 @@ public class EditActivity extends AppCompatActivity implements ViewPager.OnPageC
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         //FragmentAdapterの初期化
-        adapter = new FragmentPagerAdapter(getSupportFragmentManager()) {
-            @Override
-            public Fragment getItem(int position) {
-                return fragmentArray.get(position);
-            }
-
-            @Override
-            public CharSequence getPageTitle(int position) {
-                String title = fragmentArray.get(position).getArguments().getString("title");
-                return title;
-            }
-
-            @Override
-            public int getCount() {
-                return fragmentArray.size();
-            }
-        };
+        adapter = new EditorFragmentAdapter(getSupportFragmentManager());
 
 
         //プロジェクト名取得用ダイアログを生成
@@ -369,10 +353,17 @@ public class EditActivity extends AppCompatActivity implements ViewPager.OnPageC
 
     private void removeTab(final int position) {
         fragmentArray.remove(position);
+        adapter.startUpdate(viewPager);
+        adapter.remove(viewPager, position + 1);
+        adapter.finishUpdate(viewPager);
         adapter.notifyDataSetChanged();
         fileNameList.remove(position);
         arrayAdapter.notifyDataSetChanged();
     }
+//
+//    public ArrayList<EditFragment> setFragmentArray() {
+//        return this.fragmentArray;
+//    }
 
 }
 
