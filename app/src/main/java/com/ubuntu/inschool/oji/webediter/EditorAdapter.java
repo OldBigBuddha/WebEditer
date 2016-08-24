@@ -1,5 +1,6 @@
 package com.ubuntu.inschool.oji.webediter;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -11,7 +12,10 @@ import android.view.ViewGroup;
 import com.ubuntu.inschool.oji.webediter.Fragments.EditFragment;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by oji on 16/08/20.
@@ -20,28 +24,34 @@ public class EditorAdapter extends FragmentPagerAdapter {
 
     private FragmentManager manager;
     private FragmentTransaction transaction;
-    private ArrayList<EditFragment> fragments;
+//    private ArrayList<EditFragment> fragments;
+    private HashMap<Integer,String> fragmentTags;
     private String fileName, code;
+    private Context context;
 
-    public EditorAdapter(FragmentManager fragmentManager) {
+    public EditorAdapter(FragmentManager fragmentManager, Context context) {
         super(fragmentManager);
-        fragments = new ArrayList<EditFragment>();
+//        fragments = new ArrayList<EditFragment>();
+        this.manager = fragmentManager;
+        this.context = context;
+        fragmentTags = new HashMap<Integer, String>();
     }
 
     @Override
     public int getCount() {
-        return fragments.size();
+        return fragmentTags.size();
     }
 
     @Override
     public CharSequence getPageTitle(int position) {
-        String title = fragments.get(position).getArguments().getString("title");
+
+        String title = manager.findFragmentByTag(getTag(position)).getArguments().getString("title");
         return title;
     }
 
     @Override
     public Fragment getItem(int position) {
-        return this.fragments.get(position);
+        return Fragment.instantiate(context,EditActivity.class.getName());
     }
 
     @Override
@@ -56,11 +66,31 @@ public class EditorAdapter extends FragmentPagerAdapter {
         }
     }
 
-    public void remove(ViewPager pager, final int position) {
+    @Override
+    public Object instantiateItem(ViewGroup container, int position) {
+        Object object = (EditFragment)super.instantiateItem(container, position);
+
+        if (object instanceof EditFragment) {
+            EditFragment fragment = (EditFragment)object;
+            String fragmentTag = fragment.getTag();
+            fragmentTags.put(position, fragmentTag);
+        }
+
+        return (EditFragment)object;
+    }
+
+    public boolean remove(ViewPager pager, final int position) {
         Object object = this.instantiateItem(pager, position);
         if (object != null) {
             destroyItem(pager, position, object);
+            fragmentTags.remove(getTag(position));
+            return true;
         }
+        return false;
+    }
+
+    public EditFragment getFragment(final int position) {
+        return (EditFragment) manager.findFragmentByTag(getTag(position));
     }
 
     protected void addFragment(String projectPath, String fileName, final int extension){
@@ -74,11 +104,11 @@ public class EditorAdapter extends FragmentPagerAdapter {
         args.putString("code", code);
         fragment.setArguments(args);
 
-        fragments.add(fragment);
+        fragmentTags.put(fragmentTags.size() + 1, fragment.getTag());
     }
 
-    protected ArrayList<EditFragment> setFragments() {
-        return this.fragments;
+    protected HashMap<Integer,String> setFragments() {
+        return this.fragmentTags;
     }
 
     private void setCode(String fileName, final int extension) {
@@ -116,5 +146,13 @@ public class EditorAdapter extends FragmentPagerAdapter {
         }
         this.code = code;
         this.fileName = fileName;
+    }
+
+    private String getTag(final int position) {
+        String tag = fragmentTags.get(position);
+        if (tag == null || tag.equals("")) {
+            return null;
+        }
+        return tag;
     }
 }

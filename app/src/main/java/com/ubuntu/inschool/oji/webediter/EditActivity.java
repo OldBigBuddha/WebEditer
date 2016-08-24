@@ -77,7 +77,7 @@ public class EditActivity extends AppCompatActivity implements ViewPager.OnPageC
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         //FragmentAdapterの初期化
-        adapter = new EditorAdapter(getSupportFragmentManager());
+        adapter = new EditorAdapter(getSupportFragmentManager(), this);
 
 
         //プロジェクト名取得用ダイアログを生成
@@ -269,7 +269,7 @@ public class EditActivity extends AppCompatActivity implements ViewPager.OnPageC
             viewPager.setAdapter(adapter);
 
             //新しく生成したタブを選択にする
-            int selectTabPosition = adapter.setFragments().size() - 1;
+            int selectTabPosition = adapter.getCount() - 1;
             TabLayout.Tab tab = tabLayout.getTabAt(selectTabPosition);
             tab.select();
 
