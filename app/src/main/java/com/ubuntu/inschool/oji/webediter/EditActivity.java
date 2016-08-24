@@ -2,14 +2,11 @@ package com.ubuntu.inschool.oji.webediter;
 
 import android.content.DialogInterface;
 import android.support.design.widget.TabLayout;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -20,10 +17,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.ubuntu.inschool.oji.webediter.Fragments.EditFragment;
-
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -35,9 +29,9 @@ public class EditActivity extends AppCompatActivity implements ViewPager.OnPageC
     //プロジェクト名
     private String projectName;
     //Fragmentを管理するためのArrayList
-    public static ArrayList<EditFragment> fragmentArray = new ArrayList<>();
+//    public static ArrayList<EditFragment> fragmentArray = new ArrayList<>();
     private ArrayList<String> fragmentIdArray = new ArrayList<>();
-    private EditorFragmentAdapter adapter;
+    private EditorAdapter adapter;
 
 
     //Tab関連
@@ -83,7 +77,7 @@ public class EditActivity extends AppCompatActivity implements ViewPager.OnPageC
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         //FragmentAdapterの初期化
-        adapter = new EditorFragmentAdapter(getSupportFragmentManager());
+        adapter = new EditorAdapter(getSupportFragmentManager());
 
 
         //プロジェクト名取得用ダイアログを生成
@@ -269,50 +263,24 @@ public class EditActivity extends AppCompatActivity implements ViewPager.OnPageC
     //別クラスに移行予定
     private boolean makeFile(String fileName, final int extension) {
 
-        String type = null;
-
-
-            switch (extension) {
-                case TYPE_HTML: {
-                    type = ".html";
-                    fileName = fileName + type;
-                    break;
-                }
-
-                case TYPE_CSS: {
-                    type = ".css";
-                    fileName = fileName + type;
-                    break;
-                }
-
-                case TYPE_JS: {
-                    type = ".js";
-                    fileName = fileName + type;
-                    break;
-                }
-            }
-
             //Fragmentの生成
-            EditFragment fragment = EditFragment.newInstance(projectPath,fileName, extension);
-            fragmentArray.add(fragment);
-
-            //Tabの生成
+            adapter.addFragment(projectPath, fileName, extension);
             adapter.notifyDataSetChanged();
             viewPager.setAdapter(adapter);
 
             //新しく生成したタブを選択にする
-            int selectTabPosition = fragmentArray.size() - 1;
+            int selectTabPosition = adapter.setFragments().size() - 1;
             TabLayout.Tab tab = tabLayout.getTabAt(selectTabPosition);
             tab.select();
 
             //新規ファイルをNavigationViewのファイルツリーに反映
-            setFileTreeOnNavigatinView();
+            setFileTreeOnNavigationView();
 
         return true;
     }
 
     //NavigationViewのtreeListにdataFilePath下のファイル一覧をセット
-    private void setFileTreeOnNavigatinView() {
+    private void setFileTreeOnNavigationView() {
         listView = (ListView)findViewById(R.id.treeList);
         TextView textView = (TextView)findViewById(R.id.navigation_textView);
         textView.setText(projectName);
@@ -325,20 +293,12 @@ public class EditActivity extends AppCompatActivity implements ViewPager.OnPageC
                 //Adapterの取得
                 arrayAdapter = (ArrayAdapter<String>)listView.getAdapter();
 
-                EditFragment fragment = fragmentArray.get(position);
-                String frgmentStr = fragment.toString();
-                Toast.makeText(getApplicationContext(), frgmentStr, Toast.LENGTH_SHORT).show();
-
                 //削除するファイル名及びフルパス取得
                 String positingFileName = fileNameList.get(position);
                 FileManager fileManager = new FileManager(projectPath, positingFileName);
                 fileManager.deleteFile();
 
-                Toast.makeText(getApplicationContext(), position + "\n" + fragmentArray.get(position).toString(), Toast.LENGTH_SHORT).show();
-
-
                 //削除したファイルに関連するFragment及びTabの削除及び更新
-//                adapter.destroyItem(fragment.container, position, adapter.instantiateItem(fragment.container, position));
                 removeTab(position);
 
                 return false;
@@ -352,18 +312,14 @@ public class EditActivity extends AppCompatActivity implements ViewPager.OnPageC
     }
 
     private void removeTab(final int position) {
-        fragmentArray.remove(position);
         adapter.startUpdate(viewPager);
         adapter.remove(viewPager, position + 1);
         adapter.finishUpdate(viewPager);
+        adapter.setFragments().remove(position);
         adapter.notifyDataSetChanged();
         fileNameList.remove(position);
         arrayAdapter.notifyDataSetChanged();
     }
-//
-//    public ArrayList<EditFragment> setFragmentArray() {
-//        return this.fragmentArray;
-//    }
 
 }
 

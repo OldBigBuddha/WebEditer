@@ -18,11 +18,10 @@ import java.io.File;
 public class EditFragment extends Fragment {
 
     public static String title;
-    public ViewGroup container;
-    public int extension;
+//    public int extension;
     public String code;
     public EditText editText;
-    private String titleInHTML;
+//    private String titleInHTML;
     private String projectPath;
     private String filePath;
 
@@ -31,21 +30,16 @@ public class EditFragment extends Fragment {
     }
 
 
-    public static EditFragment newInstance(String projectPath, String title, final int extension) {
+    public static EditFragment newInstance() {
         EditFragment fragment = new EditFragment();
-        Bundle args = new Bundle();
-        args.putString("title", title);
-        args.putString("projectPath", projectPath);
-        args.putInt("extension", extension);
-        fragment.setArguments(args);
         return fragment;
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+//        container.removeAllViews();
         final View VIEW = inflater.inflate(R.layout.fragment_blank, container, false);
-        this.container = container;
         return VIEW;
     }
 
@@ -57,41 +51,10 @@ public class EditFragment extends Fragment {
         editText = (EditText) view.findViewById(R.id.editText);
         projectPath = getArguments().getString("projectPath");
         title = getArguments().getString("title");
-        extension = getArguments().getInt("extension");
+        code = getArguments().getString("code");
 
         filePath = projectPath + "/" + title;
 
-        if (this.title == null) {
-            this.title = "index";
-        } else {
-            titleInHTML = title.split("\\.")[0];
-        }
-
-        switch (this.extension) {
-            case EditActivity.TYPE_HTML:
-                code = "<html>\n" +
-                        "\t<head>\n" +
-                        "\t\t<title> " + titleInHTML + "</title>\n" +
-                        "\t\t<meta charset=\"utf-8\">\n" +
-                        "\t\t<link rel=\"stylesheet\" type=\"text/css\" href=\"./index.css\">\n" +
-                        "\t\t<script type=\"text/javascript\" src=\".index.js\"></script>\n" +
-                        "\t</head>\n" +
-                        "\t<body>\n" +
-                        "\t\t<h1>HelloWorld</h1>\n" +
-                        "\t</body>\n" +
-                        "<html>\n";
-                break;
-            case EditActivity.TYPE_CSS:
-                code = "h1 {\n" +
-                        "\tcolor: blue;\n" +
-                        "}\n";
-                break;
-            case EditActivity.TYPE_JS:
-                code = "alert(\"HelloWorld\")";
-                break;
-            default:
-                code = "";
-        }
         editText.setText(code);
         save();
 
