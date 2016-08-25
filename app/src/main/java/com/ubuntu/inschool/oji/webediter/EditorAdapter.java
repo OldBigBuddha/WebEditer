@@ -45,13 +45,17 @@ public class EditorAdapter extends FragmentPagerAdapter {
     @Override
     public CharSequence getPageTitle(int position) {
 
-        String title = manager.findFragmentByTag(getTag(position)).getArguments().getString("title");
+//        String title = manager.findFragmentByTag(getTag(position)).getArguments().getString("title");
+        String title = "Tab" + position;
+
         return title;
     }
 
     @Override
     public Fragment getItem(int position) {
-        return Fragment.instantiate(context,EditActivity.class.getName());
+//        Fragment fragment = Fragment.instantiate(context, Fragment.class.getName(), );
+        Fragment fragment = manager.findFragmentByTag(getTag(position));
+        return fragment;
     }
 
     @Override
@@ -68,15 +72,15 @@ public class EditorAdapter extends FragmentPagerAdapter {
 
     @Override
     public Object instantiateItem(ViewGroup container, int position) {
-        Object object = (EditFragment)super.instantiateItem(container, position);
+        Object object = (Fragment)super.instantiateItem(container, position);
 
-        if (object instanceof EditFragment) {
-            EditFragment fragment = (EditFragment)object;
+        if (object instanceof Fragment) {
+            Fragment fragment = (Fragment)object;
             String fragmentTag = fragment.getTag();
             fragmentTags.put(position, fragmentTag);
         }
 
-        return (EditFragment)object;
+        return (Fragment)object;
     }
 
     public boolean remove(ViewPager pager, final int position) {

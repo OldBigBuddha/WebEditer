@@ -84,6 +84,7 @@ public class EditActivity extends AppCompatActivity implements ViewPager.OnPageC
         makeDialog_newProject();
 
         //viewPagerにadapterをセット
+        adapter.notifyDataSetChanged();
         viewPager.setAdapter(adapter);
         viewPager.addOnPageChangeListener(this);
 
@@ -265,7 +266,7 @@ public class EditActivity extends AppCompatActivity implements ViewPager.OnPageC
 
             //Fragmentの生成
             adapter.addFragment(projectPath, fileName, extension);
-            adapter.notifyDataSetChanged();
+//            adapter.notifyDataSetChanged();
             viewPager.setAdapter(adapter);
 
             //新しく生成したタブを選択にする
