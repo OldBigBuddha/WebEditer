@@ -84,7 +84,7 @@ public class EditActivity extends AppCompatActivity implements ViewPager.OnPageC
         makeDialog_newProject();
 
         //viewPagerにadapterをセット
-        adapter.notifyDataSetChanged();
+//        adapter.notifyDataSetChanged();
         viewPager.setAdapter(adapter);
         viewPager.addOnPageChangeListener(this);
 
@@ -193,8 +193,8 @@ public class EditActivity extends AppCompatActivity implements ViewPager.OnPageC
 
                         if (!dateFilePath.exists()) {
                             dateFilePath.mkdir();
-                            makeFile("index", TYPE_HTML);
-                            makeFile("style", TYPE_CSS);
+//                            makeFile("index", TYPE_HTML);
+//                            makeFile("style", TYPE_CSS);
                         }else {
 
                         }
@@ -202,8 +202,9 @@ public class EditActivity extends AppCompatActivity implements ViewPager.OnPageC
                 });
 
         alertDialog = ADBuilder.create();
-
         alertDialog.show();
+
+        adapter.setProjectPath(projectPath);
     }
 
     //ファイル新規作成にファイル名及び種類を尋ねるダイアログの作成
@@ -265,12 +266,12 @@ public class EditActivity extends AppCompatActivity implements ViewPager.OnPageC
     private boolean makeFile(String fileName, final int extension) {
 
             //Fragmentの生成
-            adapter.addFragment(projectPath, fileName, extension);
+            adapter.addFragment(fileName, extension);
 //            adapter.notifyDataSetChanged();
             viewPager.setAdapter(adapter);
 
             //新しく生成したタブを選択にする
-            int selectTabPosition = adapter.getCount() - 1;
+            int selectTabPosition = adapter.getCount();
             TabLayout.Tab tab = tabLayout.getTabAt(selectTabPosition);
             tab.select();
 

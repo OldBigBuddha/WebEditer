@@ -11,11 +11,7 @@ import android.view.ViewGroup;
 
 import com.ubuntu.inschool.oji.webediter.Fragments.EditFragment;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
 
 /**
  * Created by oji on 16/08/20.
@@ -26,13 +22,15 @@ public class EditorAdapter extends FragmentPagerAdapter {
     private FragmentTransaction transaction;
 //    private ArrayList<EditFragment> fragments;
     private HashMap<Integer,String> fragmentTags;
-    private String fileName, code;
+    private String fileName, code, projectPath;
+    private boolean isFinishedHTML = false;
     private Context context;
 
     public EditorAdapter(FragmentManager fragmentManager, Context context) {
         super(fragmentManager);
 //        fragments = new ArrayList<EditFragment>();
         this.manager = fragmentManager;
+        this.transaction = manager.beginTransaction();
         this.context = context;
         fragmentTags = new HashMap<Integer, String>();
     }
@@ -45,8 +43,8 @@ public class EditorAdapter extends FragmentPagerAdapter {
     @Override
     public CharSequence getPageTitle(int position) {
 
-//        String title = manager.findFragmentByTag(getTag(position)).getArguments().getString("title");
-        String title = "Tab" + position;
+        String title = manager.findFragmentByTag(getTag(position)).getArguments().getString("title");
+//        String title = "Tab" + position;
 
         return title;
     }
@@ -71,16 +69,38 @@ public class EditorAdapter extends FragmentPagerAdapter {
     }
 
     @Override
-    public Object instantiateItem(ViewGroup container, int position) {
-        Object object = (Fragment)super.instantiateItem(container, position);
+    public Object instantiateItem(ViewGroup container, final int position) {
 
-        if (object instanceof Fragment) {
-            Fragment fragment = (Fragment)object;
-            String fragmentTag = fragment.getTag();
-            fragmentTags.put(position, fragmentTag);
+        if (transaction == null) {
+            transaction = manager.beginTransaction();
+        }
+        String tag = getTag(position);
+        Fragment fragment = manager.findFragmentByTag(tag);
+        if (fragment != null) {
+            transaction.attach(fragment);
+        } else {
+            if (!isFinishedHTML) {
+                fragment = addFragment("index.html",EditActivity.TYPE_HTML);
+                isFinishedHTML = true;
+            } else if (isFinishedHTML) {
+                fragment = addFragment("style.css", EditActivity.TYPE_CSS);
+            }
+//            fragment = getItem(position);
+            transaction.add(fragment, tag);
         }
 
-        return (Fragment)object;
+        return fragment;
+//        if (fragment != )
+
+//        Object object = super.instantiateItem(container, position);
+//
+//        if (object instanceof Fragment) {
+//            Fragment fragment = (Fragment)object;
+//            String fragmentTag = fragment.getTag();
+//            fragmentTags.put(position, fragmentTag);
+//        }
+//
+//        return object;
     }
 
     public boolean remove(ViewPager pager, final int position) {
@@ -97,18 +117,22 @@ public class EditorAdapter extends FragmentPagerAdapter {
         return (EditFragment) manager.findFragmentByTag(getTag(position));
     }
 
-    protected void addFragment(String projectPath, String fileName, final int extension){
+    protected Fragment addFragment(String fileName, final int extension){
 
         setCode(fileName, extension);
 
         EditFragment fragment = EditFragment.newInstance();
+        final int position = fragmentTags.size() + 1;
         Bundle args = new Bundle();
         args.putString("title", this.fileName);
         args.putString("projectPath", projectPath);
         args.putString("code", code);
         fragment.setArguments(args);
+        transaction.add(position, fragment);
 
-        fragmentTags.put(fragmentTags.size() + 1, fragment.getTag());
+        fragmentTags.put(position, fragment.getTag());
+
+        return (Fragment)fragment;
     }
 
     protected HashMap<Integer,String> setFragments() {
@@ -158,5 +182,9 @@ public class EditorAdapter extends FragmentPagerAdapter {
             return null;
         }
         return tag;
+    }
+
+    public void setProjectPath(String projectPath) {
+        this.projectPath = projectPath;
     }
 }
