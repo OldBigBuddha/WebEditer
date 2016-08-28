@@ -342,7 +342,6 @@ public class EditActivity extends AppCompatActivity implements ViewPager.OnPageC
 
         Bundle args = new Bundle();
         args.putString("title", fileName);
-        args.putString("projectPath", projectPath);
         args.putInt("extension", extension);
         fragment.setArguments(args);
 

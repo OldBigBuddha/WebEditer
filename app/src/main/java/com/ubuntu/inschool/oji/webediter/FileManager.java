@@ -27,10 +27,7 @@ public class FileManager {
     private String code;
 
     public FileManager(String projectPath, String fileName) {
-//        this.projectPath = projectPath;
-//        this.fileName = fileName;
         this.path = new File(projectPath + "/" + fileName);
-
     }
 
     public String read() {

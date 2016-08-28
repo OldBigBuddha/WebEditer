@@ -48,7 +48,7 @@ public class EditFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         editText    = (EditText) view.findViewById(R.id.editText);
-        projectPath = getArguments().getString("projectPath");
+        projectPath = EditActivity.projectPath;
         title       = getArguments().getString("title");
         extension   = getArguments().getInt("extension");
 
@@ -84,7 +84,7 @@ public class EditFragment extends Fragment {
                 code = "alert(\"HelloWorld\")";
                 break;
         }
-        editText.setText(code);
+        setCode(code);
         save();
 
     }
@@ -105,5 +105,9 @@ public class EditFragment extends Fragment {
         }
         fileManager.setFileCode(fileCode);
         fileManager.savaCode();
+    }
+
+    public void setCode(String code) {
+        editText.setText(code);
     }
 }

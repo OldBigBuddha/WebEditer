@@ -20,6 +20,7 @@ android {
 }
 
 repositories {
+    mavenCentral();
     maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
 }
 
@@ -29,5 +30,7 @@ dependencies {
     compile 'com.android.support:design:23.4.0'
     compile 'com.android.support:appcompat-v7:23.4.0'
     compile 'com.android.support:support-v4:23.4.0'
+//    compile files('libs/activeandroid.jar')
+    compile 'com.michaelpardo:activeandroid:3.1.0-SNAPSHOT'
     compile 'com.google.code.gson:gson:2.7'
 }
