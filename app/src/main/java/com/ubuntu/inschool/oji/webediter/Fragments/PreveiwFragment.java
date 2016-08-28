@@ -22,7 +22,6 @@ public class PreveiwFragment extends Fragment {
     private Button  updateButton;
 
     private String fileName;
-    private String title;
     private final String urlHead = "file://";
 
 
@@ -50,9 +49,7 @@ public class PreveiwFragment extends Fragment {
         webView         = (WebView)view.findViewById(R.id.webView);
         updateButton    = (Button)view.findViewById(R.id.updateButton);
 
-        fileName = getArguments().getString("fileName");
-
-        title = fileName.split("\\.")[0];
+        fileName =  getArguments().getString("fileName");
 
         View.OnClickListener updateOnClick = new View.OnClickListener() {
             @Override

@@ -17,10 +17,4 @@
         android:orderInCategory="2"
         app:showAsAction="never" />
 
-    <item
-        android:id="@+id/preview_tab"
-        android:title="プレビュー"
-        android:orderInCategory="3"
-        app:showAsAction="never" />
-
 </menu>

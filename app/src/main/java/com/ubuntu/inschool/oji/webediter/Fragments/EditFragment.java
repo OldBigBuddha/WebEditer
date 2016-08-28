@@ -18,7 +18,7 @@ import java.io.StringWriter;
 
 public class EditFragment extends Fragment {
 
-    public static String title;
+    private String title;
 //    private String fileName;
     public int extension;
     public String code;
@@ -89,6 +89,12 @@ public class EditFragment extends Fragment {
 
     }
 
+    @Override
+    public void onPause() {
+        super.onPause();
+        code = editText.getText().toString();
+        save();
+    }
 
     public void save() {
         String fileCode = editText.getText().toString();

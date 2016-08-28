@@ -1,6 +1,9 @@
 package com.ubuntu.inschool.oji.webediter;
 
+import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
@@ -22,6 +25,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.gson.Gson;
 import com.ubuntu.inschool.oji.webediter.Fragments.EditFragment;
 import com.ubuntu.inschool.oji.webediter.Fragments.PreveiwFragment;
 
@@ -45,7 +49,9 @@ public class EditActivity extends AppCompatActivity implements ViewPager.OnPageC
 //    private ArrayList<String> fragmentIdArray = new ArrayList<>();
     //フラグメントアダプター
     private FragmentPagerAdapter adapter;
-
+    private SharedPreferences adapterPref;
+    private SharedPreferences.Editor adapterEditor;
+    private Gson gson = new Gson();
 
     //Tab関連
     private TabLayout tabLayout;
@@ -74,11 +80,20 @@ public class EditActivity extends AppCompatActivity implements ViewPager.OnPageC
     private ArrayAdapter<String> arrayAdapter;
     private ListView listView;
 
+    private boolean isLoad = false;
+    private boolean isMakeStationery = false;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit);
+
+        Intent intent = getIntent();
+        isLoad = intent.getBooleanExtra("isLoad",false);
+
+        adapterPref   = this.getPreferences(MODE_PRIVATE);
+        adapterEditor = adapterPref.edit();
 
         //関連付け
         drawerLayout    = (DrawerLayout)findViewById(R.id.drawerLayout);
@@ -90,28 +105,35 @@ public class EditActivity extends AppCompatActivity implements ViewPager.OnPageC
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        //FragmentAdapterの初期化
-        adapter = new FragmentPagerAdapter(getSupportFragmentManager()) {
-            @Override
-            public Fragment getItem(int position) {
-                return fragmentArray.get(position);
-            }
+        if (!isLoad) {
 
-            @Override
-            public CharSequence getPageTitle(int position) {
-                String title = fragmentArray.get(position).getArguments().getString("title");
-                return title;
-            }
+            //FragmentAdapterの初期化
+            adapter = new FragmentPagerAdapter(getSupportFragmentManager()) {
+                @Override
+                public Fragment getItem(int position) {
+                    return fragmentArray.get(position);
+                }
 
-            @Override
-            public int getCount() {
-                return fragmentArray.size();
-            }
-        };
+                @Override
+                public CharSequence getPageTitle(int position) {
+                    Fragment fragment = fragmentArray.get(position);
+                    String title = fragment.getArguments().getString("title");
+                    return title;
+                }
+
+                @Override
+                public int getCount() {
+                    return fragmentArray.size();
+                }
+            };
 
 
-        //プロジェクト名取得用ダイアログを生成
-        makeDialog_newProject();
+            //プロジェクト名取得用ダイアログを生成
+            makeDialog_newProject();
+        }else if (isLoad) {
+            this.projectName = intent.getStringExtra("loadProjectName");
+            adapter = getAdapter();
+        }
 
         //viewPagerにadapterをセット
         viewPager.setAdapter(adapter);
@@ -119,6 +141,7 @@ public class EditActivity extends AppCompatActivity implements ViewPager.OnPageC
 
         //FragmentをTabLayoutで表示
         tabLayout.setupWithViewPager(viewPager);
+        isMakeStationery = true;
     }
 
     //Toolbarのメニュー定義
@@ -169,9 +192,7 @@ public class EditActivity extends AppCompatActivity implements ViewPager.OnPageC
                 } else
                 //保存
                 if (id == R.id.save_tab) {
-                } else
-                if (id == R.id.preview_tab) {
-                    createPreviewer();
+                    allSave();
                 }
                 return true;
             }
@@ -221,7 +242,6 @@ public class EditActivity extends AppCompatActivity implements ViewPager.OnPageC
                             dateFilePath.mkdir();
                             makeFile("index", TYPE_HTML);
                             makeFile("style", TYPE_CSS);
-//                            setFileTreeOnNavigatinView();
                         }else {
                             finish();
                         }
@@ -231,7 +251,7 @@ public class EditActivity extends AppCompatActivity implements ViewPager.OnPageC
         alertDialog = ADBuilder.create();
 
         alertDialog.show();
-//        setFileTreeOnNavigatinView();
+        saveAdapter();
     }
 
     //ファイル新規作成にファイル名及び種類を尋ねるダイアログの作成
@@ -285,7 +305,9 @@ public class EditActivity extends AppCompatActivity implements ViewPager.OnPageC
         });
 
         nameDig.create().show();
-
+        setFileTreeOnNavigatinView();
+        saveAdapter();
+        allSave();
     }
 
     //ファイル新規作成
@@ -316,39 +338,42 @@ public class EditActivity extends AppCompatActivity implements ViewPager.OnPageC
 
             //Fragmentの生成
         EditFragment fragment = EditFragment.newInstance();
+        fragmentArray.add(fragment);
+
         Bundle args = new Bundle();
         args.putString("title", fileName);
         args.putString("projectPath", projectPath);
         args.putInt("extension", extension);
         fragment.setArguments(args);
 
-        fragmentArray.add(fragment);
 
             //Tabの生成
         adapter.notifyDataSetChanged();
         viewPager.setAdapter(adapter);
 
         //新しく生成したタブを選択にする
-        int selectTabPosition = fragmentArray.size() - 1;
-        TabLayout.Tab tab = tabLayout.getTabAt(selectTabPosition);
-        tab.select();
+        selectTab();
 
         //新規ファイルをNavigationViewのファイルツリーに反映
-//        setFileTreeOnNavigatinView();
+        setFileTreeOnNavigatinView();
 
         return true;
     }
 
-    private void createPreviewer(/*String fileName*/) {
+    private void createPreviewer(String fileName) {
 
         PreveiwFragment fragment = PreveiwFragment.newInstance();
         Bundle args = new Bundle();
-        args.putString("fileName", "index.html");
+        args.putString("fileName", fileName);
+        String title = fileName.split("\\.")[0] + "_Pre";
+        args.putString("title", title);
         fragment.setArguments(args);
 
         fragmentArray.add(fragment);
         adapter.notifyDataSetChanged();
         viewPager.setAdapter(adapter);
+
+        selectTab();
 
     }
 
@@ -359,30 +384,13 @@ public class EditActivity extends AppCompatActivity implements ViewPager.OnPageC
         textView.setText(projectName);
         fileNameList = new ArrayList(Arrays.asList(dateFilePath.list()));
 
-//        要素長押しで選択したファイルを削除
-//        listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
-//            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-//
-//                //Adapterの取得
-////                arrayAdapter = (ArrayAdapter<String>)listView.getAdapter();
-//
-//                //ファイル名及びフルパス取得
-//                String positingFileName = fileNameList.get(position);
-//                createPreviewer(positingFileName);
-//
-//                return false;
-//            }
-//        });
-
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        listView.setOnItemClickListener(new ListView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-//                arrayAdapter = (ArrayAdapter<String>)listView.getAdapter();
-
                 Toast.makeText(EditActivity.this, "getOnClick", Toast.LENGTH_SHORT).show();
 
                 String fileName = fileNameList.get(position);
-                createPreviewer();
+                createPreviewer(fileName);
 
             }
         });
@@ -391,6 +399,36 @@ public class EditActivity extends AppCompatActivity implements ViewPager.OnPageC
         arrayAdapter = new ArrayAdapter(this,android.R.layout.simple_expandable_list_item_1,fileNameList);
         listView.setAdapter(arrayAdapter);
 
+    }
+
+    private void selectTab() {
+        final int selectTabPosition = fragmentArray.size() - 1;
+        TabLayout.Tab tab = tabLayout.getTabAt(selectTabPosition);
+        tab.select();
+    }
+
+    private void allSave() {
+        for (Fragment fragment : fragmentArray) {
+            if (fragment instanceof EditFragment) {
+                ((EditFragment) fragment).save();
+            }
+        }
+        saveAdapter();
+    }
+
+    private void saveAdapter() {
+        String json = gson.toJson(adapter);
+        adapterEditor.putString(projectName, json);
+        adapterEditor.commit();
+    }
+
+    private FragmentPagerAdapter getAdapter() {
+        String json = adapterPref.getString(projectName, "");
+        if (json.isEmpty()) {
+//            return false;
+        }
+        adapter = gson.fromJson(json, FragmentPagerAdapter.class);
+        return adapter;
     }
 
 }
