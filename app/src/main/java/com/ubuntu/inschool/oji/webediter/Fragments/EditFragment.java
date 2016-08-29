@@ -67,7 +67,7 @@ public class EditFragment extends Fragment {
                         "\t<head>\n" +
                         "\t\t<title>" + titleInHTML + "</title>\n" +
                         "\t\t<meta charset=\"utf-8\">\n" +
-                        "\t\t<link rel=\"stylesheet\" type=\"text/css\" href=\"./index.css\">\n" +
+                        "\t\t<link rel=\"stylesheet\" type=\"text/css\" href=\"style.css\">\n" +
                         "\t\t<script type=\"text/javascript\" src=\".index.js\"></script>\n" +
                         "\t</head>\n" +
                         "\t<body>\n" +

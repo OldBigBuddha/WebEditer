@@ -21,4 +21,5 @@ public class adapterDB {
     public adapterDB (FragmentPagerAdapter fragmentPagerAdapter) {
         this.adapter = fragmentPagerAdapter;
     }
+    
 }

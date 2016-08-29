@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.WebView;
+import android.webkit.WebViewClient;
 import android.widget.Button;
 
 import com.ubuntu.inschool.oji.webediter.EditActivity;
@@ -48,6 +49,9 @@ public class PreveiwFragment extends Fragment {
 
         webView         = (WebView)view.findViewById(R.id.webView);
         updateButton    = (Button)view.findViewById(R.id.updateButton);
+
+        webView.setWebViewClient(new WebViewClient());
+        webView.getSettings().setJavaScriptEnabled(true);
 
         fileName =  getArguments().getString("fileName");
 
