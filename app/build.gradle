@@ -21,7 +21,7 @@ android {
 
 repositories {
     mavenCentral();
-    maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
+    maven { url 'https://download.01.org/crosswalk/releases/crosswalk/android/maven2'}
 }
 
 dependencies {
@@ -30,7 +30,5 @@ dependencies {
     compile 'com.android.support:design:23.4.0'
     compile 'com.android.support:appcompat-v7:23.4.0'
     compile 'com.android.support:support-v4:23.4.0'
-//    compile files('libs/activeandroid.jar')
-    compile 'com.michaelpardo:activeandroid:3.1.0-SNAPSHOT'
-    compile 'com.google.code.gson:gson:2.7'
+    compile 'org.xwalk:xwalk_core_library:10.39.235.15'
 }

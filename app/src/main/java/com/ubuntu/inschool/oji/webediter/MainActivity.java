@@ -18,6 +18,10 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+/**
+* アプリ甲子園提出用アプリ 【はとまる】
+*/
+
 public class MainActivity extends AppCompatActivity {
 
     private File filePath;

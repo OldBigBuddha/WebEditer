@@ -17,7 +17,10 @@ import java.io.OutputStreamWriter;
 /**
  * Created by oji on 16/08/14.
  * 主にファイルの入出力をするためのクラス
+ *
+ * アプリ甲子園提出用アプリ 【はとまる】
  */
+
 public class FileManager {
 
     private File path;

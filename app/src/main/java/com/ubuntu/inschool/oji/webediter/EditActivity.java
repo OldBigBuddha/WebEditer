@@ -1,6 +1,5 @@
 package com.ubuntu.inschool.oji.webediter;
 
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -14,7 +13,6 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -25,14 +23,18 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.gson.Gson;
 import com.ubuntu.inschool.oji.webediter.Fragments.EditFragment;
 import com.ubuntu.inschool.oji.webediter.Fragments.PreveiwFragment;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
+
+/*
+* アプリ甲子園提出用アプリ 【はとまる】
+*/
+
 
 public class EditActivity extends AppCompatActivity implements ViewPager.OnPageChangeListener{
 
@@ -46,12 +48,8 @@ public class EditActivity extends AppCompatActivity implements ViewPager.OnPageC
     private String projectName;
     //Fragmentを管理するためのArrayList
     private ArrayList<Fragment> fragmentArray = new ArrayList<>();
-//    private ArrayList<String> fragmentIdArray = new ArrayList<>();
     //フラグメントアダプター
     private FragmentPagerAdapter adapter;
-    private SharedPreferences adapterPref;
-    private SharedPreferences.Editor adapterEditor;
-    private Gson gson = new Gson();
 
     //Tab関連
     private TabLayout tabLayout;
@@ -92,9 +90,6 @@ public class EditActivity extends AppCompatActivity implements ViewPager.OnPageC
         Intent intent = getIntent();
         isLoad = intent.getBooleanExtra("isLoad",false);
 
-        adapterPref   = this.getPreferences(MODE_PRIVATE);
-        adapterEditor = adapterPref.edit();
-
         //関連付け
         drawerLayout    = (DrawerLayout)findViewById(R.id.drawerLayout);
         toolbar         = (Toolbar)findViewById(R.id.tool_bar);
@@ -131,8 +126,7 @@ public class EditActivity extends AppCompatActivity implements ViewPager.OnPageC
             //プロジェクト名取得用ダイアログを生成
             makeDialog_newProject();
         }else if (isLoad) {
-            this.projectName = intent.getStringExtra("loadProjectName");
-            adapter = getAdapter();
+            /*未実装*/
         }
 
         //viewPagerにadapterをセット
@@ -251,7 +245,7 @@ public class EditActivity extends AppCompatActivity implements ViewPager.OnPageC
         alertDialog = ADBuilder.create();
 
         alertDialog.show();
-        saveAdapter();
+//        saveAdapter();
     }
 
     //ファイル新規作成にファイル名及び種類を尋ねるダイアログの作成
@@ -306,7 +300,7 @@ public class EditActivity extends AppCompatActivity implements ViewPager.OnPageC
 
         nameDig.create().show();
         setFileTreeOnNavigatinView();
-        saveAdapter();
+//        saveAdapter();
         allSave();
     }
 
@@ -314,7 +308,7 @@ public class EditActivity extends AppCompatActivity implements ViewPager.OnPageC
     //別クラスに移行予定
     private boolean makeFile(String fileName, final int extension) {
 
-            String type = null;
+            String type = ".txt";
 
             switch (extension) {
                 case TYPE_HTML: {
@@ -412,23 +406,7 @@ public class EditActivity extends AppCompatActivity implements ViewPager.OnPageC
                 ((EditFragment) fragment).save();
             }
         }
-        saveAdapter();
+        setFileTreeOnNavigatinView();
     }
-
-    private void saveAdapter() {
-        String json = gson.toJson(adapter);
-        adapterEditor.putString(projectName, json);
-        adapterEditor.commit();
-    }
-
-    private FragmentPagerAdapter getAdapter() {
-        String json = adapterPref.getString(projectName, "");
-        if (json.isEmpty()) {
-//            return false;
-        }
-        adapter = gson.fromJson(json, FragmentPagerAdapter.class);
-        return adapter;
-    }
-
 }
 
