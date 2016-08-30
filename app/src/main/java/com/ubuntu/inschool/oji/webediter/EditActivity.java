@@ -305,7 +305,6 @@ public class EditActivity extends AppCompatActivity implements ViewPager.OnPageC
     }
 
     //ファイル新規作成
-    //別クラスに移行予定
     private boolean makeFile(String fileName, final int extension) {
 
             String type = ".txt";
@@ -380,11 +379,8 @@ public class EditActivity extends AppCompatActivity implements ViewPager.OnPageC
         listView.setOnItemClickListener(new ListView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Toast.makeText(EditActivity.this, "getOnClick", Toast.LENGTH_SHORT).show();
-
                 String fileName = fileNameList.get(position);
                 createPreviewer(fileName);
-
             }
         });
 
