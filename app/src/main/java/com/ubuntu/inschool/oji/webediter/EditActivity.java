@@ -13,6 +13,7 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -23,7 +24,10 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.ubuntu.inschool.oji.webediter.Fragments.CSSFragment;
 import com.ubuntu.inschool.oji.webediter.Fragments.EditFragment;
+import com.ubuntu.inschool.oji.webediter.Fragments.HTMLFragment;
+import com.ubuntu.inschool.oji.webediter.Fragments.JSFragment;
 import com.ubuntu.inschool.oji.webediter.Fragments.PreveiwFragment;
 
 import java.io.File;
@@ -99,6 +103,7 @@ public class EditActivity extends AppCompatActivity implements ViewPager.OnPageC
         //ToolbarをActionbarの代わりにセット
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setHomeButtonEnabled(true);
 
         if (!isLoad) {
 
@@ -150,49 +155,66 @@ public class EditActivity extends AppCompatActivity implements ViewPager.OnPageC
                 int id = item.getItemId();
 
                 //Tabの追加及びファイルの新規作成
-                if (id == R.id.new_tab) {
+                switch (id) {
+                    case R.id.new_tab: {
+                        //新規作成ダイアログの作成
+                        final CharSequence[] ITEMS = {"HTML","CSS","JavaScript"};
+                        AlertDialog.Builder addDig = new AlertDialog.Builder(EditActivity.this);
+                        addDig.setTitle("ファイル形式を選択してください");
+                        addDig.setItems(ITEMS, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
 
-                    //新規作成ダイアログの作成
-                    final CharSequence[] ITEMS = {"HTML","CSS","JavaScript"};
-                    AlertDialog.Builder addDig = new AlertDialog.Builder(EditActivity.this);
-                    addDig.setTitle("ファイル形式を選択してください");
-                    addDig.setItems(ITEMS, new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
+                                //作成するファイルの種類を選択
+                                //種類選別用変数・拡張子が入る
+                                switch (which) {
+                                    //HTMLファイル
+                                    case 0:
+                                        EditActivity.this.makeDialog_newFile(TYPE_HTML);
+                                        break;
+                                    //CSSファイル
+                                    case 1:
+                                        EditActivity.this.makeDialog_newFile(TYPE_CSS);
+                                        break;
+                                    //JavaScriptファイル
+                                    case 2:
+                                        EditActivity.this.makeDialog_newFile(TYPE_JS);
+                                        break;
+                                }
 
-                            //作成するファイルの種類を選択
-                            //種類選別用変数・拡張子が入る
-                            switch (which) {
-                                //HTMLファイル
-                                case 0:
-                                    EditActivity.this.makeDialog_newFile(TYPE_HTML);
-                                    break;
-                                //CSSファイル
-                                case 1:
-                                    EditActivity.this.makeDialog_newFile(TYPE_CSS);
-                                    break;
-                                //JavaScriptファイル
-                                case 2:
-                                    EditActivity.this.makeDialog_newFile(TYPE_JS);
-                                    break;
                             }
+                        });
 
-                        }
-                    });
-
-                    addDig.create().show();
-                    return true;
-
-                } else
-                //保存
-                if (id == R.id.save_tab) {
-                    allSave();
+                        addDig.create().show();
+                        break;
+                    }
+                    case R.id.save_tab: {
+                        allSave();
+                        break;
+                    }
+                    case android.R.id.home: {
+                        allSave();
+                        finish();
+                        break;
+                    }
                 }
                 return true;
             }
         });
 
         return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    protected void onUserLeaveHint() {
+        allSave();
+        super.onUserLeaveHint();
+    }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        allSave();
+        return super.onKeyDown(keyCode, event);
     }
 
     /*  ↓ViewPager.OnPageChangeListenerをimplementsしたため必要なメソッド群↓   */
@@ -245,7 +267,6 @@ public class EditActivity extends AppCompatActivity implements ViewPager.OnPageC
         alertDialog = ADBuilder.create();
 
         alertDialog.show();
-//        saveAdapter();
     }
 
     //ファイル新規作成にファイル名及び種類を尋ねるダイアログの作成
@@ -300,37 +321,38 @@ public class EditActivity extends AppCompatActivity implements ViewPager.OnPageC
 
         nameDig.create().show();
         setFileTreeOnNavigatinView();
-//        saveAdapter();
         allSave();
     }
 
     //ファイル新規作成
     private boolean makeFile(String fileName, final int extension) {
 
-            String type = ".txt";
-
+        String type = ".txt";
+        EditFragment fragment = null;
             switch (extension) {
                 case TYPE_HTML: {
                     type = ".html";
                     fileName = fileName + type;
+                    fragment = HTMLFragment.newInstance();
                     break;
                 }
 
                 case TYPE_CSS: {
                     type = ".css";
                     fileName = fileName + type;
+                    fragment = CSSFragment.newInstance();
                     break;
                 }
 
                 case TYPE_JS: {
                     type = ".js";
                     fileName = fileName + type;
+                    fragment = JSFragment.newInstance();
                     break;
                 }
             }
 
             //Fragmentの生成
-        EditFragment fragment = EditFragment.newInstance();
         fragmentArray.add(fragment);
 
         Bundle args = new Bundle();
@@ -345,10 +367,6 @@ public class EditActivity extends AppCompatActivity implements ViewPager.OnPageC
 
         //新しく生成したタブを選択にする
         selectTab();
-
-        //新規ファイルをNavigationViewのファイルツリーに反映
-        setFileTreeOnNavigatinView();
-
         return true;
     }
 
@@ -403,6 +421,7 @@ public class EditActivity extends AppCompatActivity implements ViewPager.OnPageC
             }
         }
         setFileTreeOnNavigatinView();
+        Toast.makeText(this,"save",Toast.LENGTH_SHORT).show();
     }
 }
 

@@ -14,8 +14,6 @@ import android.widget.Button;
 import com.ubuntu.inschool.oji.webediter.EditActivity;
 import com.ubuntu.inschool.oji.webediter.R;
 
-import org.xwalk.core.XWalkView;
-
 /**
  * A simple {@link Fragment} subclass.
  */
@@ -29,7 +27,6 @@ public class PreveiwFragment extends Fragment {
 
 
     public PreveiwFragment() {
-        // Required empty public constructor
     }
 
     public static PreveiwFragment newInstance() {
@@ -40,7 +37,6 @@ public class PreveiwFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
         final View view = inflater.inflate(R.layout.fragment_preveiw, container, false);
         return view;
     }
@@ -52,10 +48,9 @@ public class PreveiwFragment extends Fragment {
         webView         = (WebView) view.findViewById(R.id.webView);
         updateButton    = (Button)view.findViewById(R.id.updateButton);
 
-//        webView.setWebViewClient(new WebViewClient());
-//        webView.getSettings().setJavaScriptEnabled(true);
-
         fileName =  getArguments().getString("fileName");
+        webView.setWebViewClient(new WebViewClient());
+        webView.getSettings().setJavaScriptEnabled(true);
 
         View.OnClickListener updateOnClick = new View.OnClickListener() {
             @Override
