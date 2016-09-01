@@ -74,43 +74,27 @@ public class EditFragment extends Fragment {
                 setTabOnClick();
             }
         });
-
+        btH.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                setHOnClick();
+            }
+        });
+        btP.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                setPOnClick();
+            }
+        });
+        btDiv.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                setDivOnClick();
+            }
+        });
 
 
         filePath = projectPath + "/" + title;
-
-
-//        if (this.title == null) {
-//            this.title = "index";
-//        } else {
-//            titleInHTML = title.split("\\.")[0];
-//        }
-//
-//        switch (this.extension) {
-//            case EditActivity.TYPE_HTML:
-//                code = "<html>\n" +
-//                        "\t<head>\n" +
-//                        "\t\t<title>" + titleInHTML + "</title>\n" +
-//                        "\t\t<meta charset=\"utf-8\">\n" +
-//                        "\t\t<link rel=\"stylesheet\" type=\"text/css\" href=\"style.css\">\n" +
-//                        "\t\t<script type=\"text/javascript\" src=\".index.js\"></script>\n" +
-//                        "\t</head>\n" +
-//                        "\t<body>\n" +
-//                        "\t\t<h1>HelloWorld</h1>\n" +
-//                        "\t</body>\n" +
-//                        "<html>\n";
-//                break;
-//            case EditActivity.TYPE_CSS:
-//                code = "h1 {\n" +
-//                        "\tcolor: blue;\n" +
-//                        "}\n";
-//                break;
-//            case EditActivity.TYPE_JS:
-//                break;
-//        }
-////        setCode(code);
-//        save();
-
     }
 
     @Override
@@ -152,9 +136,15 @@ public class EditFragment extends Fragment {
         moveCount = 0;
     }
 
-    public void setTabOnClick () {
+    public void setTabOnClick() {
         setText = "\t";
         setText(setText);
-
     }
+
+    public void setHOnClick() {}
+
+    public void setPOnClick() {}
+
+    public void setDivOnClick() {}
+
 }
