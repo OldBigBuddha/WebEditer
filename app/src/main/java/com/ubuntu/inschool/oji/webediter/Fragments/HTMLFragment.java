@@ -59,59 +59,50 @@ public class HTMLFragment extends EditFragment {
                 "\t</body>\n" +
                 "<html>\n";
 
-        btP.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                setText   = "<p></p>";
-                moveCount = 3;
-                setText(setText);
-            }
-        });
-
-        btDiv.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                setText   = "<div></div>";
-                moveCount = 5;
-                setText(setText);
-            }
-        });
-
-        btH.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                ListView listView = new ListView(getContext());
-                AlertDialog alertDialog = null;
-                AlertDialog.Builder ADBuilder = new AlertDialog.Builder(getContext());
-
-                final CharSequence[] ITEMS = {"1","2","3","4","5","6"};
-                ADBuilder.setTitle("選択してください")
-                        .setView(listView)
-                        .setItems(ITEMS, new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                int hSize = which + 1;
-                                setText = "<h" + hSize + "></h" + hSize + ">";
-                                moveCount = 4;
-                                setText(setText);
-                            }
-                        });
-                ADBuilder.setNegativeButton("キャンセル", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                    }
-                });
-
-                alertDialog = ADBuilder.create();
-                alertDialog.show();
-
-            }
-        });
-
-
-
         setCode(code);
         save();
 
+    }
+
+    @Override
+    public void setHOnClick() {
+        ListView listView = new ListView(getContext());
+        AlertDialog alertDialog = null;
+        AlertDialog.Builder ADBuilder = new AlertDialog.Builder(getContext());
+
+        final CharSequence[] ITEMS = {"1","2","3","4","5","6"};
+        ADBuilder.setTitle("選択してください")
+                .setView(listView)
+                .setItems(ITEMS, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        int hSize = which + 1;
+                        setText = "<h" + hSize + "></h" + hSize + ">";
+                        moveCount = 4;
+                        setText(setText);
+                    }
+                });
+        ADBuilder.setNegativeButton("キャンセル", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+            }
+        });
+
+        alertDialog = ADBuilder.create();
+        alertDialog.show();
+    }
+
+    @Override
+    public void setPOnClick() {
+        setText   = "<p></p>";
+        moveCount = 3;
+        setText(setText);
+    }
+
+    @Override
+    public void setDivOnClick() {
+        setText   = "<div></div>";
+        moveCount = 5;
+        setText(setText);
     }
 }

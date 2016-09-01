@@ -1,14 +1,17 @@
 package com.ubuntu.inschool.oji.webediter.Fragments;
 
+import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
 import android.text.Editable;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
@@ -22,7 +25,7 @@ import java.io.File;
 * アプリ甲子園提出用アプリ 【はとまる】
 */
 
-public class EditFragment extends Fragment {
+public abstract class EditFragment extends Fragment {
 
     public String title;
     public int extension;
@@ -32,19 +35,21 @@ public class EditFragment extends Fragment {
     public String titleInHTML;
     public String projectPath;
     public String filePath;
+    public Context context;
 
     public int start, end;
     public int moveCount = 0;
     public String setText;
     public Editable editable;
+    public InputMethodManager inputMethodManager;
 
     public EditFragment() {
     }
 
-    public static EditFragment newInstance() {
-        EditFragment fragment = new EditFragment();
-        return fragment;
-    }
+//    public static EditFragment newInstance() {
+//        EditFragment fragment = new EditFragment();
+//        return fragment;
+//    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -67,6 +72,19 @@ public class EditFragment extends Fragment {
         projectPath = EditActivity.projectPath;
         title       = getArguments().getString("title");
         extension   = getArguments().getInt("extension");
+        context     = getActivity();
+        inputMethodManager = (InputMethodManager)context.getSystemService(Context.INPUT_METHOD_SERVICE);
+
+        editText.setOnKeyListener(new View.OnKeyListener() {
+            @Override
+            public boolean onKey(View v, int keyCode, KeyEvent event) {
+                if (event.getAction() == KeyEvent.ACTION_DOWN && keyCode == KeyEvent.KEYCODE_ENTER) {
+                    code = editText.getText().toString();
+                    String[] line = code.split("\n", 0);
+                }
+                return false;
+            }
+        });
 
         btTab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -141,10 +159,10 @@ public class EditFragment extends Fragment {
         setText(setText);
     }
 
-    public void setHOnClick() {}
+    public abstract void setHOnClick();
 
-    public void setPOnClick() {}
+    public abstract void setPOnClick();
 
-    public void setDivOnClick() {}
+    public abstract void setDivOnClick();
 
 }

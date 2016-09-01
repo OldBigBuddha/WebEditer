@@ -41,4 +41,21 @@ public class JSFragment extends EditFragment {
         setCode(code);
         save();
     }
+
+
+    @Override
+    public void setHOnClick() {
+
+    }
+
+    @Override
+    public void setPOnClick() {
+
+    }
+
+    @Override
+    public void setDivOnClick() {
+
+    }
+
 }
