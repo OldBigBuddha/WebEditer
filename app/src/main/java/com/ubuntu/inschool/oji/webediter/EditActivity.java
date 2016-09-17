@@ -2,11 +2,12 @@ package com.ubuntu.inschool.oji.webediter;
 
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AlertDialog;
@@ -17,6 +18,7 @@ import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
@@ -51,7 +53,7 @@ public class EditActivity extends AppCompatActivity implements ViewPager.OnPageC
     //プロジェクト名
     private String projectName;
     //Fragmentを管理するためのArrayList
-    private ArrayList<Fragment> fragmentArray = new ArrayList<>();
+    private ArrayList<Fragment> fragments = new ArrayList<>();
     //フラグメントアダプター
     private FragmentPagerAdapter adapter;
 
@@ -105,33 +107,71 @@ public class EditActivity extends AppCompatActivity implements ViewPager.OnPageC
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setHomeButtonEnabled(true);
 
+        //FragmentAdapterの初期化
+        adapter = new FragmentPagerAdapter() {
+            @Override
+            public Fragment getItem(int position) {
+                return fragments.get(position);
+            }
+
+            @Override
+            public CharSequence getPageTitle(int position) {
+                return fragments.get(position).getArguments().getString("title");
+            }
+
+            @Override
+            public void destroyItem(ViewGroup container, int position, Object object) {
+                super.destroyItem(container, position, object);
+
+                if (position <= getCount()) {
+                    Fragment fragment = (Fragment)object;
+                    FragmentManager     fm          = fragment.getFragmentManager();
+                    FragmentTransaction transaction = fm.beginTransaction();
+                    transaction.remove(fragment);
+                    transaction.commit();
+                }
+
+            }
+
+            @Override
+            public int getCount() {
+                return fragments.size();
+            }
+
+            public void remove(ViewPager pager, final int position) {
+                Object object = this.instantiateItem(pager, position);
+                if (object != null) {
+                    destroyItem(pager,position,object);
+                }
+            }
+        };
+
         if (!isLoad) {
-
-            //FragmentAdapterの初期化
-            adapter = new FragmentPagerAdapter(getSupportFragmentManager()) {
-                @Override
-                public Fragment getItem(int position) {
-                    return fragmentArray.get(position);
-                }
-
-                @Override
-                public CharSequence getPageTitle(int position) {
-                    Fragment fragment = fragmentArray.get(position);
-                    String title = fragment.getArguments().getString("title");
-                    return title;
-                }
-
-                @Override
-                public int getCount() {
-                    return fragmentArray.size();
-                }
-            };
-
-
             //プロジェクト名取得用ダイアログを生成
             makeDialog_newProject();
         }else if (isLoad) {
             /*未実装*/
+            projectName = intent.getStringExtra("loadProjectName");
+            projectPath = intent.getStringExtra("loadProjectPath");
+            File projectPath = new File(MainActivity.filePath.toString() + "/" + projectName);
+            for (int i = 0;i < projectPath.list().length;i++) {
+                String fileName = projectPath.list()[i];
+                String extension = fileName.split("\\.")[1];
+                switch (extension) {
+                    case ".html": {
+                        makeFile(fileName.split("\\.")[0],TYPE_HTML);
+                        break;
+                    }
+                    case ".css": {
+                        makeFile(fileName.split("\\.")[0],TYPE_CSS);
+                        break;
+                    }
+                    case ".js": {
+                        makeFile(fileName.split("\\.")[0],TYPE_JS);
+                        break;
+                    }
+                }
+            }
         }
 
         //viewPagerにadapterをセット
@@ -353,7 +393,7 @@ public class EditActivity extends AppCompatActivity implements ViewPager.OnPageC
             }
 
             //Fragmentの生成
-        fragmentArray.add(fragment);
+        fragments.add(fragment);
 
         Bundle args = new Bundle();
         args.putString("title", fileName);
@@ -379,7 +419,7 @@ public class EditActivity extends AppCompatActivity implements ViewPager.OnPageC
         args.putString("title", title);
         fragment.setArguments(args);
 
-        fragmentArray.add(fragment);
+        fragments.add(fragment);
         adapter.notifyDataSetChanged();
         viewPager.setAdapter(adapter);
 
@@ -409,13 +449,26 @@ public class EditActivity extends AppCompatActivity implements ViewPager.OnPageC
     }
 
     private void selectTab() {
-        final int selectTabPosition = fragmentArray.size() - 1;
+        final int selectTabPosition = fragments.size() - 1;
         TabLayout.Tab tab = tabLayout.getTabAt(selectTabPosition);
         tab.select();
     }
 
+    private void removeTab(final int position) {
+        allSave();
+        fragments.remove(position);
+        adapter.startUpdate(viewPager);
+        adapter.remove(viewPager, position + 1);
+        adapter.finishUpdate(viewPager);
+        adapter.notifyDataSetChanged();
+        fileNameList.remove(position);
+        arrayAdapter.notifyDataSetChanged();
+        allSave();
+    }
+
+
     private void allSave() {
-        for (Fragment fragment : fragmentArray) {
+        for (Fragment fragment : fragments) {
             if (fragment instanceof EditFragment) {
                 ((EditFragment) fragment).save();
             }

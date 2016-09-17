@@ -84,6 +84,7 @@ public class CSSFragment extends EditFragment {
         setText = "p {\n" +
                 "\t\n" +
                 "}\n";
+        moveCount = 1;
         setText(setText);
     }
 
@@ -92,6 +93,7 @@ public class CSSFragment extends EditFragment {
         setText = "div {\n" +
                 "\t\n" +
                 "}\n";
+        moveCount = 1;
         setText(setText);
     }
 

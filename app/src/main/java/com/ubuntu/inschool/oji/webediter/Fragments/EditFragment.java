@@ -80,6 +80,7 @@ public abstract class EditFragment extends Fragment {
             public boolean onKey(View v, int keyCode, KeyEvent event) {
                 if (event.getAction() == KeyEvent.ACTION_DOWN && keyCode == KeyEvent.KEYCODE_ENTER) {
                     code = editText.getText().toString();
+                    code = code.substring(0, editText.getSelectionStart());
                     String[] line = code.split("\n", 0);
                 }
                 return false;
