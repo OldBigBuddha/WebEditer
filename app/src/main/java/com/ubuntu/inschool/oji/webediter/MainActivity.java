@@ -33,6 +33,7 @@ public class MainActivity extends AppCompatActivity {
 
     private TextView createProject, setting;
     private ListView listView;
+    //データの保存場所(/data/data/com.ubuntu.inschool.oji.webediter/files)パス
     protected static File filePath;
     private ArrayList<String> fileList;
     private Intent intent;

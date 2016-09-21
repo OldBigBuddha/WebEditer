@@ -55,9 +55,9 @@ public class FileManager {
         return null;
     }
 
-    public String getFileCode() {
-        return fileCode;
-    }
+//    public String getFileCode() {
+//        return fileCode;
+//    }
 
     public void setFileCode(String code) {
         this.fileCode = code;

@@ -36,7 +36,11 @@ public class JSFragment extends EditFragment {
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        code = "alert(\"HelloWorld\")";
+        if (getArguments().getBoolean("isLoad")) {
+            load(title);
+        } else {
+            code = "alert(\"HelloWorld\")";
+        }
 
         setCode(code);
         save();

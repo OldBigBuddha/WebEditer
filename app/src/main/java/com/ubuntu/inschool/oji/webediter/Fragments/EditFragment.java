@@ -18,6 +18,7 @@ import android.widget.ListView;
 
 import com.ubuntu.inschool.oji.webediter.EditActivity;
 import com.ubuntu.inschool.oji.webediter.FileManager;
+import com.ubuntu.inschool.oji.webediter.MainActivity;
 import com.ubuntu.inschool.oji.webediter.R;
 
 import java.io.File;
@@ -153,6 +154,11 @@ public abstract class EditFragment extends Fragment {
         }
 
         moveCount = 0;
+    }
+
+    public void load(String title) {
+        FileManager loadFile = new FileManager(EditActivity.projectPath, title);
+        this.code = loadFile.read();
     }
 
     public void setTabOnClick() {

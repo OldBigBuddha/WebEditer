@@ -41,10 +41,14 @@ public class CSSFragment extends EditFragment {
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        code = "h1 {\n" +
-                "\tcolor: blue;\n" +
-                "}\n";
 
+        if (getArguments().getBoolean("isLoad")) {
+            load(title);
+        } else {
+            code = "h1 {\n" +
+                    "\tcolor: blue;\n" +
+                    "}\n";
+        }
         setCode(code);
         save();
 

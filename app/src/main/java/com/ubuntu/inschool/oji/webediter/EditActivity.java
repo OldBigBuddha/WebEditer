@@ -61,8 +61,6 @@ public class EditActivity extends AppCompatActivity implements ViewPager.OnPageC
     private TabLayout tabLayout;
     private ViewPager viewPager;
 
-    //アプリの保存場所(/data/data/com.ubuntu.inschool.oji.webediter/files)パス
-    private String filePath;
     //ファイルの保存場所(filePath + / + プロジェクト名)パス
     public static String projectPath;
     //projectPathのFile型
@@ -108,7 +106,7 @@ public class EditActivity extends AppCompatActivity implements ViewPager.OnPageC
         getSupportActionBar().setHomeButtonEnabled(true);
 
         //FragmentAdapterの初期化
-        adapter = new FragmentPagerAdapter() {
+        adapter = new FragmentPagerAdapter(getSupportFragmentManager()) {
             @Override
             public Fragment getItem(int position) {
                 return fragments.get(position);
@@ -122,15 +120,15 @@ public class EditActivity extends AppCompatActivity implements ViewPager.OnPageC
             @Override
             public void destroyItem(ViewGroup container, int position, Object object) {
                 super.destroyItem(container, position, object);
-
-                if (position <= getCount()) {
-                    Fragment fragment = (Fragment)object;
-                    FragmentManager     fm          = fragment.getFragmentManager();
-                    FragmentTransaction transaction = fm.beginTransaction();
-                    transaction.remove(fragment);
-                    transaction.commit();
-                }
-
+//
+//                if (position <= getCount()) {
+//                    Fragment fragment = (Fragment)object;
+//                    FragmentManager     fm          = fragment.getFragmentManager();
+//                    FragmentTransaction transaction = fm.beginTransaction();
+//                    transaction.remove(fragment);
+//                    transaction.commit();
+//                }
+//
             }
 
             @Override
@@ -146,31 +144,32 @@ public class EditActivity extends AppCompatActivity implements ViewPager.OnPageC
             }
         };
 
-        if (!isLoad) {
-            //プロジェクト名取得用ダイアログを生成
-            makeDialog_newProject();
-        }else if (isLoad) {
+        if (isLoad) {
             /*未実装*/
             projectName = intent.getStringExtra("loadProjectName");
             projectPath = intent.getStringExtra("loadProjectPath");
             File projectPath = new File(MainActivity.filePath.toString() + "/" + projectName);
+            if (projectPath.exists()) {
             for (int i = 0;i < projectPath.list().length;i++) {
                 String fileName = projectPath.list()[i];
                 String extension = fileName.split("\\.")[1];
                 switch (extension) {
                     case ".html": {
-                        makeFile(fileName.split("\\.")[0],TYPE_HTML);
+                        makeFile(fileName.split("\\.")[0], TYPE_HTML, true);
                         break;
                     }
                     case ".css": {
-                        makeFile(fileName.split("\\.")[0],TYPE_CSS);
+                        makeFile(fileName.split("\\.")[0], TYPE_CSS, true);
                         break;
                     }
                     case ".js": {
-                        makeFile(fileName.split("\\.")[0],TYPE_JS);
+                        makeFile(fileName.split("\\.")[0], TYPE_JS, true);
                         break;
                     }
+                    }
                 }
+            } else {
+                makeDialog_newProject();
             }
         }
 
@@ -289,15 +288,14 @@ public class EditActivity extends AppCompatActivity implements ViewPager.OnPageC
                         EditText editText_ProjectName = (EditText)VIEW.findViewById(R.id.editText_ProjectName);
                         EditActivity.this.projectName = editText_ProjectName.getText().toString();
 
-                        filePath = getFilesDir().toString();
-                        projectPath = filePath + "/" + projectName;
+                        projectPath = MainActivity.filePath.toString() + "/" + projectName;
                         dateFilePath = new File(projectPath);
                         Toast.makeText(EditActivity.this,dateFilePath.toString(),Toast.LENGTH_LONG).show();
 
                         if (!dateFilePath.exists()) {
                             dateFilePath.mkdir();
-                            makeFile("index", TYPE_HTML);
-                            makeFile("style", TYPE_CSS);
+                            makeFile("index", TYPE_HTML, false);
+                            makeFile("style", TYPE_CSS, false);
                         }else {
                             finish();
                         }
@@ -336,15 +334,15 @@ public class EditActivity extends AppCompatActivity implements ViewPager.OnPageC
 
                 switch (extension) {
                     case TYPE_HTML:
-                        makeFile(fileName, TYPE_HTML);
+                        makeFile(fileName, TYPE_HTML, false);
                         break;
 
                     case TYPE_CSS:
-                        makeFile(fileName, TYPE_CSS);
+                        makeFile(fileName, TYPE_CSS, false);
                         break;
 
                     case TYPE_JS:
-                        makeFile(fileName, TYPE_JS);
+                        makeFile(fileName, TYPE_JS, false);
                         break;
                 }
 
@@ -365,7 +363,7 @@ public class EditActivity extends AppCompatActivity implements ViewPager.OnPageC
     }
 
     //ファイル新規作成
-    private boolean makeFile(String fileName, final int extension) {
+    private boolean makeFile(String fileName, final int extension, boolean isLoad) {
 
         String type = ".txt";
         EditFragment fragment = null;
@@ -392,12 +390,12 @@ public class EditActivity extends AppCompatActivity implements ViewPager.OnPageC
                 }
             }
 
-            //Fragmentの生成
         fragments.add(fragment);
 
         Bundle args = new Bundle();
         args.putString("title", fileName);
         args.putInt("extension", extension);
+        args.putBoolean("isLoad", isLoad);
         fragment.setArguments(args);
 
 
@@ -442,10 +440,25 @@ public class EditActivity extends AppCompatActivity implements ViewPager.OnPageC
             }
         });
 
+        listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+                arrayAdapter = (ArrayAdapter<String>)listView.getAdapter();
+
+                String positioningFileName = fileNameList.get(position);
+                FileManager deleteFile     = new FileManager(projectPath, positioningFileName);
+                deleteFile.deleteFile();
+
+                removeTab(position);
+
+                return false;
+            }
+        });
+
 //        ファイルリストをセット
         arrayAdapter = new ArrayAdapter(this,android.R.layout.simple_expandable_list_item_1,fileNameList);
         listView.setAdapter(arrayAdapter);
-
+        Toast.makeText(this,"setTree",Toast.LENGTH_SHORT).show();
     }
 
     private void selectTab() {
@@ -456,11 +469,16 @@ public class EditActivity extends AppCompatActivity implements ViewPager.OnPageC
 
     private void removeTab(final int position) {
         allSave();
-        fragments.remove(position);
+        Fragment fragment = fragments.get(position);
         adapter.startUpdate(viewPager);
-        adapter.remove(viewPager, position + 1);
+//        adapter.remove(viewPager, position + 1);
+        if (fragment != null) {
+            adapter.destroyItem(viewPager, position + 1, fragment);
+        }
         adapter.finishUpdate(viewPager);
         adapter.notifyDataSetChanged();
+
+        fragments.remove(position);
         fileNameList.remove(position);
         arrayAdapter.notifyDataSetChanged();
         allSave();
@@ -474,7 +492,6 @@ public class EditActivity extends AppCompatActivity implements ViewPager.OnPageC
             }
         }
         setFileTreeOnNavigatinView();
-        Toast.makeText(this,"save",Toast.LENGTH_SHORT).show();
     }
 }
 
