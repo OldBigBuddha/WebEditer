@@ -16,7 +16,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 
-import com.ubuntu.inschool.oji.webediter.EditActivity;
 import com.ubuntu.inschool.oji.webediter.FileManager;
 import com.ubuntu.inschool.oji.webediter.MainActivity;
 import com.ubuntu.inschool.oji.webediter.R;
@@ -70,7 +69,7 @@ public abstract class EditFragment extends Fragment {
         btP      = (Button)  view.findViewById(R.id.pButton);
         btH      = (Button)  view.findViewById(R.id.hButton);
         editText    = (EditText)view.findViewById(R.id.editText);
-        projectPath = EditActivity.projectPath;
+        projectPath = MainActivity.filePath.toString();
         title       = getArguments().getString("title");
         extension   = getArguments().getInt("extension");
         context     = getActivity();
@@ -157,7 +156,7 @@ public abstract class EditFragment extends Fragment {
     }
 
     public void load(String title) {
-        FileManager loadFile = new FileManager(EditActivity.projectPath, title);
+        FileManager loadFile = new FileManager(MainActivity.filePath.toString(), title);
         this.code = loadFile.read();
     }
 

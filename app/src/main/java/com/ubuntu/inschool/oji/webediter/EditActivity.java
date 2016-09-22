@@ -148,21 +148,21 @@ public class EditActivity extends AppCompatActivity implements ViewPager.OnPageC
             /*未実装*/
             projectName = intent.getStringExtra("loadProjectName");
             projectPath = intent.getStringExtra("loadProjectPath");
-            File projectPath = new File(MainActivity.filePath.toString() + "/" + projectName);
-            if (projectPath.exists()) {
-            for (int i = 0;i < projectPath.list().length;i++) {
-                String fileName = projectPath.list()[i];
+            dateFilePath = new File(MainActivity.filePath.toString() + "/" + projectName);
+            if (dateFilePath.exists()) {
+            for (int i = 0;i < dateFilePath.list().length;i++) {
+                String fileName = dateFilePath.list()[i];
                 String extension = fileName.split("\\.")[1];
                 switch (extension) {
-                    case ".html": {
+                    case "html": {
                         makeFile(fileName.split("\\.")[0], TYPE_HTML, true);
                         break;
                     }
-                    case ".css": {
+                    case "css": {
                         makeFile(fileName.split("\\.")[0], TYPE_CSS, true);
                         break;
                     }
-                    case ".js": {
+                    case "js": {
                         makeFile(fileName.split("\\.")[0], TYPE_JS, true);
                         break;
                     }

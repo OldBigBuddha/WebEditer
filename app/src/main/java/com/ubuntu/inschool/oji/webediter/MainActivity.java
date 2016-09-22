@@ -34,7 +34,7 @@ public class MainActivity extends AppCompatActivity {
     private TextView createProject, setting;
     private ListView listView;
     //データの保存場所(/data/data/com.ubuntu.inschool.oji.webediter/files)パス
-    protected static File filePath;
+    public static File filePath;
     private ArrayList<String> fileList;
     private Intent intent;
     private boolean isLoad = false;
@@ -69,7 +69,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public ArrayAdapter setProjectList(final Context context) {
-        filePath = getFilesDir();
         fileList = new ArrayList<>(Arrays.asList(filePath.list()));
         fileList.remove(fileList.indexOf("instant-run"));
 
